@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/EllaCrabtree/CS554_TaskTopia/issues"
   },
-  "homepage": "https://github.com/EllaCrabtree/CS554_TaskTopia#readme"
+  "homepage": "https://github.com/EllaCrabtree/CS554_TaskTopia#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "mongodb": "^4.12.1"
+  }
 }
