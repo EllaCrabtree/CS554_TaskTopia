@@ -1,0 +1,19 @@
+{
+  "name": "cs554_tasktopia",
+  "version": "1.0.0",
+  "description": "We do be codin :)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EllaCrabtree/CS554_TaskTopia.git"
+  },
+  "author": "Ella Lobstertwig, Bella Cruise, Seb Churro, Isaac Pond, Kera McGovernment",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EllaCrabtree/CS554_TaskTopia/issues"
+  },
+  "homepage": "https://github.com/EllaCrabtree/CS554_TaskTopia#readme"
+}
