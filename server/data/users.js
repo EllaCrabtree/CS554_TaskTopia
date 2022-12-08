@@ -227,12 +227,48 @@ async function addBuildingToUser(username, buildingID) {
 
 
 //This one we may want to do later once we understand how this is updated
+// ~~ I agree, we'll wait
 async function updateCompletionFrequency(username, completed) {
 
 }
 
 async function updateLevel(username, newLevel) {
 
+    if (arguments.length != 2) throw 'Error: Invalid number of arguments!'
+
+    //-----------------------------------Check Username-----------------------------------
+
+    if (!username) throw 'Error: Username not supplied!'
+
+    if (typeof username !== 'string') throw 'Error: Username must be a string!'
+
+    if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
+
+    // Check username requirements - decide later
+    const new_username = username.trim();
+
+    //check if username is within database
+    const userCollection = await users();
+    const foundUser = await userCollection.findOne({username: new_username});
+
+    if (!foundUser) throw 'Error: User not found!'
+
+    //-----------------------------------Check newLevel -----------------------------------
+
+    if (!newLevel) throw 'Error: New Level not supplied!'
+
+    if (!Number.isInteger(newLevel)) throw 'Error: New Level must be of type int!';
+
+    // For now, going to saw the highest possible level is 100; can change later
+    if (newLevel < 1) throw 'Error: New Level cannot be less than 1!'
+    if (newLevel > 100) throw 'Error: New Level cannot be greater than 100!'
+
+    const updatedInfo = await userCollection.updateOne({username: username}, { $set: {level: newLevel} });
+    if (updatedInfo.modifiedCount === 0) {
+        throw 'Could Not Update User Successfully';
+    }
+  
+    return await this.getUserById(foundUser._id);
 }
 
 async function addAwardToUser(username, award) {

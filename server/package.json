@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node ./tasks/seed.js",
-    "start": "node app.js"
+    "start": "node app.js",
+    "datatest": "node ./data/testDataFunctions.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,8 @@
   "homepage": "https://github.com/EllaCrabtree/CS554_TaskTopia#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "mongodb": "^4.12.1"
   }
 }
