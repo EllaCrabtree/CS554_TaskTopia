@@ -1,3 +1,8 @@
+const mongoCollections = require('../config/mongoCollections');
+const { ObjectId } = require("mongodb");
+
+const badges = mongoCollections.badges;
+
 async function createBadge(building, ptsNeeded, description) {
     if (arguments.length != 3) throw `Incorrect number of arguments passed to 'createBadge'`;
     if (!building) throw `Building cannot be empty.`;
@@ -5,7 +10,7 @@ async function createBadge(building, ptsNeeded, description) {
     building = String.prototype.trim.call(building);
     if (!ObjectId.isValid(building)) throw `building is not a valid ObjectId`;
 
-    if (!ptsNeeded) throw `Points needed cannot be empty.`;
+    if (ptsNeeded === null) throw `Points needed cannot be empty.`;
     if (typeof ptsNeeded != 'number') throw `Points needed must be a integer.`;
 
     if (!description) throw `Description cannot be empty.`;
@@ -87,7 +92,7 @@ async function updateBadge(id, building, ptsNeeded, description) {
     building = String.prototype.trim.call(building);
     if (!ObjectId.isValid(building)) throw `id is not a valid ObjectId`;
 
-    if (!ptsNeeded) throw `Points needed cannot be empty.`;
+    if (ptsNeeded === null) throw `Points needed cannot be empty.`;
     if (typeof ptsNeeded != 'number') throw `Points needed must be a integer.`;
 
     if (!description) throw `Description cannot be empty.`;
@@ -106,7 +111,7 @@ async function updateBadge(id, building, ptsNeeded, description) {
         description: description
     };
 
-    const insertInfo = await bandCollection.updateOne(
+    const insertInfo = await badgeCollection.updateOne(
         { _id: ObjectId(id) },
         { $set: newbadge });
     if (insertInfo.matchedCount === 0) throw 'Could not update badge';
@@ -137,7 +142,7 @@ async function populateBadges(building, levels) {
     if (!building) throw `Building cannot be empty.`;
     if (typeof building != 'string') throw `Building must be a string.`;
     building = String.prototype.trim.call(building);
-    if (!ObjectId.isValid(building)) throw `building is not a valid ObjectId`;
+    if (!ObjectId.isValid(building)) throw `Building is not a valid ObjectId`;
 
     if (!levels) throw `Levels cannot be empty.`;
     if (!Array.isArray(levels)) throw `Levels must be an array.`;
@@ -150,16 +155,22 @@ async function populateBadges(building, levels) {
     levels = arr;
 
     let values = ["Entry", "Bronze", "Silver", "Gold"];
+    levels.unshift(0);
 
-    for (let i = 0; i < 4; i++) {
-        let full_description;
-        if (i == 0) {
-            full_description = `Entry Level: You are just getting started! Finish those tasks to level up!`;
+    try {
+        for (let i = 0; i < 4; i++) {
+            let full_description;
+            if (i == 0) {
+                full_description = `Entry Level: You are just getting started! Finish those tasks to level up!`;
+            }
+            else {
+                full_description = `${values[i]} Level: You have reached ${levels[i]} points! Keep it up!`;
+            }
+            await createBadge(building, levels[i], full_description);
         }
-        else {
-            full_description = `${values[i]} Level: You have reached ${levels[i - 1]} points! Keep it up!`;
-        }
-        createBadge(building, levels[i - 1], full_description);
+    }
+    catch (e) {
+        throw e;
     }
 }
 
