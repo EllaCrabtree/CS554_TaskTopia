@@ -86,7 +86,11 @@ async function createUser(firstName, lastName, username, password, email) {
     }
 
     // Check username requirements - decide later
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();
+
+    if (new_username.length < 4) {
+        throw 'Server Error: Username must be at least 4 characters or longer!'
+    }
 
     
     //check if username is within database
@@ -113,7 +117,21 @@ async function createUser(firstName, lastName, username, password, email) {
 
     //Check Password Conditions - Decide Later
 
-    const hash = await bcrypt.hash(password.trim(), 16);
+    const new_password = password.trim();
+
+    if (new_password.length < 8) {
+        throw 'Error: Password must be 8 characters or longer!'
+    }
+
+    if (!(/[0-9]/.test(new_password))) {
+        throw 'Error: Password must contain at least one number!'
+    }
+
+    if (!(/[$@*%#=+]/.test(new_password))) {
+        throw 'Error: Password must contain at least one special character!'
+    }
+
+    const hash = await bcrypt.hash(new_password, 16);
 
     let newUser = {
         firstName: new_firstname,
@@ -138,13 +156,69 @@ async function createUser(firstName, lastName, username, password, email) {
 
 async function checkUser(username, password) {
 
+    //-----------------------------------Check Arguments-----------------------------------
+    if (arguments.length !== 2) {
+        throw `Server Error: Insufficient number of arguments!`
+    }
+
+    //-----------------------------------Check Username-----------------------------------
+
+    if (!username) {
+        throw 'Server Error: Username not supplied!'
+    }
+
+    if (typeof username !== 'string') {
+        throw 'Server Error: Username must be a string!'
+    }
+
+    if (username.trim().length === 0) {
+        throw 'Server Error: Username cannot be empty or only spaces!'
+    }
+
+    const new_username = username.trim();
+
+    
+    //check if username is within database
+    const foundUser = await userCollection.findOne({username: new_username});
+
+    if (!foundUser) {
+        throw 'Server Error: Incorrect username/password!'
+    }
+
+    //-----------------------------------Check Password-----------------------------------
+
+    if (!password) {
+        throw 'Server Error: Password not supplied!'
+    }
+
+    if (typeof password !== 'string') {
+        throw 'Server Error: Password must be a string!'
+    }
+
+    if (password.trim().length === 0) {
+        throw 'Server Error: Password cannot be empty or only spaces!'
+    }
+
+    //-----------------------------------Checking if Password is correct -----------------------------------
+
+    const match = await bcrypt.compare(password.trim(), foundUser.password);
+
+    if (match) {
+        return {_id: foundUser._id.toString(), username: foundUser.username}
+    } else {
+        throw 'Server error: Invalid username/password!'
+    }
+
 }
 
 async function getUserById(userId) {
+
+    //-----------------------------------Check Arguments-----------------------------------
     if (arguments.length != 1) {
         throw 'Error: Invalid number of arguments!'
     }
 
+    //-----------------------------------Check User ID-----------------------------------
     if (!userId) {
         throw 'Error: User ID not supplied!'
     }
@@ -175,10 +249,13 @@ async function getUserById(userId) {
 }
 
 async function addBuildingToUser(username, buildingID) {
+
+    //-----------------------------------Check Arguments-----------------------------------
     if (arguments.length != 2) {
         throw 'Error: Invalid number of arguments!'
     }
 
+    //-----------------------------------Check Username-----------------------------------
     if (!username) {
         throw 'Error: Username not supplied!'
     }
@@ -191,9 +268,10 @@ async function addBuildingToUser(username, buildingID) {
         throw 'Error: Username cannot be empty or only spaces!'
     }
 
-    // Check username requirements - decide later
+    // Trim off spaces from username
     const new_username = username.trim();
 
+    //Will not check username requirements (only in create)
     
     const userCollection = await users(); //Initializing User Collection Variable
 
@@ -215,9 +293,16 @@ async function addBuildingToUser(username, buildingID) {
 
     if (!ObjectId.isValid(newBuildingID)) throw 'Error: Building ID is not a valid ObjectID!'
 
+    const update = await userCollection.updateOne(
+        {_id: ObjectId(foundUser._id)},
+        { $addToSet: {buildings: ObjectId(newBuildingID)}}
+    )
 
+    if (!update.matchedCount && !update.modifiedCount) {
+       throw 'AddBuildings: Update failed';
+    }
 
-
+    return newBuildingID;
 }
 
 
