@@ -1,14 +1,22 @@
 const mongoCollections = require('../config/mongoCollections');
 const buildings = mongoCollections.buildings;
+const buildingCodes = require("./data/buildingCodes")
 const { ObjectId } = require("mongodb");
 
-async function createBuilding(xp, xpMax, level) {
+async function createBuilding(buildingCode, xp, xpMax, level) {
     //Check Arguments
-    if (arguments.length !== 6) throw 'You must provide 6 arguments for your building (id, xp, xpMax, level, Avatar, Tasks';
+    if (arguments.length !== 4) throw 'You must provide 4 arguments for your building (buildingCode,xp,xpMax,level)';
+    if (!buildingCode) throw 'You must provide a buildingCode for your building';
     if (!id) throw 'You must provide an id for your building';
     if (!xp) throw 'You must provide an xp for your building';
     if (!xpMax) throw 'You must provide an xpMax for your building';
     if (!level) throw 'You must provide an level for your building';
+
+    //Check Building Code
+    if (typeof buildingCode !== 'string') throw 'buildingCode must be a string';
+    buildingCode = buildingCode.trim();
+    if (buildingCode.length === 0) throw 'buildingCode must not be empty';
+    if (!buildingCodes.isValidBuildingCode(buildingCode)) throw 'buildingCode must be a valid buildingCode';
 
     //Check ID
     if (typeof id !== 'string') throw 'id must be a string';
@@ -31,6 +39,7 @@ async function createBuilding(xp, xpMax, level) {
     const buildingCollection = await buildings();
     const newBuilding = {
         _id: new ObjectId(),
+        buildingCode: buildingCode,
         xp: xp,
         xpMax: xpMax,
         level: level,
@@ -57,10 +66,11 @@ async function getBuilding(id) {
     return building;
 }
 
-async function updateBuilding(id, xp, xpMax, level, Avatar, Tasks) {
+async function updateBuilding(id,buildingCode, xp, xpMax, level, Avatar, Tasks) {
     //Check Arguments
-    if (arguments.length !== 6) throw 'You must provide 6 arguments for your building (id, xp, xpMax, level, Avatar, Tasks)';
+    if (arguments.length !== 7) throw 'You must provide 7 arguments for your building (id,buildingCode,xp,xpMax,level,Avatar,Tasks)';
     if (!id) throw 'You must provide an id for your building';
+    if (!buildingCode) throw 'You must provide a buildingCode for your building';
     if (!xp) throw 'You must provide an xp for your building';
     if (!xpMax) throw 'You must provide an xpMax for your building';
     if (!level) throw 'You must provide an level for your building';
@@ -71,6 +81,12 @@ async function updateBuilding(id, xp, xpMax, level, Avatar, Tasks) {
     id = id.trim();
     if (id.length === 0) throw 'id must not be empty';
     if (!ObjectId.isValid(id)) throw 'id must be a valid ObjectId';
+
+    //Check Building Code
+    if (typeof buildingCode !== 'string') throw 'buildingCode must be a string';
+    buildingCode = buildingCode.trim();
+    if (buildingCode.length === 0) throw 'buildingCode must not be empty';
+    if (!buildingCodes.isValidBuildingCode(buildingCode)) throw 'buildingCode must be a valid buildingCode';
 
     //Check XP
     if (typeof xp !== 'number') throw 'xp must be a number';
@@ -94,6 +110,7 @@ async function updateBuilding(id, xp, xpMax, level, Avatar, Tasks) {
     const buildingCollection = await buildings();
     const updatedBuilding = {
         _id: id,
+        buildingCode: buildingCode,
         xp: xp,
         xpMax: xpMax,
         level: level,
