@@ -5,6 +5,9 @@
  *      const buildingCodes = require("./data/buildingCodes")
  *      buildingCodes.ADMIN => returns string "ADMIN"
  */
+async function isValidBuildingCode(buildingCode) {
+    return Object.values(BuildingCodes).includes(buildingCode);
+}
 
 BuildingCodes = {
     ADMIN: "ADMIN",
@@ -15,4 +18,4 @@ BuildingCodes = {
     PARK: "PARK"
 }
 
-module.exports = BuildingCodes
+module.exports = {BuildingCodes, isValidBuildingCode};
