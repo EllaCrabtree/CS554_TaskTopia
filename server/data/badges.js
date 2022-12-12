@@ -11,10 +11,11 @@ const buildings = mongoCollections.buildings;
  * @param {String (BuildingCode)} building 
  * @param {Int} ptsNeeded 
  * @param {String} description 
+ * @param {String} type
  * @returns created badges
  */
-async function createBadge(building, ptsNeeded, description) {
-    if (arguments.length != 3) throw `Incorrect number of arguments passed to 'createBadge'`;
+async function createBadge(building, ptsNeeded, description, type) {
+    if (arguments.length != 4) throw `Incorrect number of arguments passed to 'createBadge'`;
     if (!building) throw `Building cannot be empty.`;
     if (typeof building != 'string') throw `Building must be a string.`;
     building = String.prototype.trim.call(building);
@@ -26,12 +27,17 @@ async function createBadge(building, ptsNeeded, description) {
     if (typeof description != 'string') throw `Description must be a string.`;
     description = String.prototype.trim.call(description);
 
+    if (!type) throw `type cannot be empty.`;
+    if (typeof type != 'string') throw `type must be a string.`;
+    type = String.prototype.trim.call(type);
+
     const badgeCollection = await badges();
 
     let newbadge = {
         building: building,
         ptsNeeded: ptsNeeded,
-        description: description
+        description: description,
+        type: type
     }
 
     const insertInfo = await badgeCollection.insertOne(newbadge);
@@ -112,9 +118,10 @@ async function removeBadge(id) {
  * @param {String (BuildingCode)} building 
  * @param {Int} ptsNeeded 
  * @param {String} description 
+ * @param {String} type
  * @returns updated badge
  */
-async function updateBadge(id, building, ptsNeeded, description) {
+async function updateBadge(id, building, ptsNeeded, description, type) {
     if (arguments.length != 4) throw `Incorrect number of arguments passed to 'updateBadge'`;
 
     if (!id) throw `Id cannot be empty.`;
@@ -133,6 +140,9 @@ async function updateBadge(id, building, ptsNeeded, description) {
     if (typeof description != 'string') throw `Description must be a string.`;
     description = String.prototype.trim.call(description);
 
+    if (!type) throw `type cannot be empty.`;
+    if (typeof type != 'string') throw `type must be a string.`;
+    type = String.prototype.trim.call(type);
 
     const badgeCollection = await badges();
 
@@ -142,7 +152,8 @@ async function updateBadge(id, building, ptsNeeded, description) {
     let newbadge = {
         building: building,
         ptsNeeded: ptsNeeded,
-        description: description
+        description: description,
+        type: type
     };
 
     const insertInfo = await badgeCollection.updateOne(
@@ -240,19 +251,19 @@ async function populateBadges(building, levels) {
     if (arr.length == 0) throw `Levels is not a valid array.`;
     levels = arr;
 
-    let values = ["Entry", "Bronze", "Silver", "Gold"];
+    let values = ["ENTRY", "BRONZE", "SILVER", "GOLD"];
     levels.unshift(0);
 
     try {
         for (let i = 0; i < 4; i++) {
             let full_description;
             if (i == 0) {
-                full_description = `${building} - Entry Level: You are just getting started! Finish those tasks to level up!`;
+                full_description = `${building} - ${values[i]} Level: You are just getting started! Finish those tasks to level up!`;
             }
             else {
                 full_description = `${building} - ${values[i]} Level: You have reached ${levels[i]} points! Keep it up!`;
             }
-            await createBadge(building, levels[i], full_description);
+            await createBadge(building, levels[i], full_description, values[i]);
         }
     }
     catch (e) {
