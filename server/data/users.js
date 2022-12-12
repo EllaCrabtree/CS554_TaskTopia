@@ -1,6 +1,7 @@
 const mongoCollections = require('../config/mongoCollections');
 
 const users = mongoCollections.users;
+const badges = mongoCollections.badges;
 const { ObjectId } = require("mongodb");
 const bcrypt = require('bcrypt');
 
@@ -317,6 +318,13 @@ async function updateCompletionFrequency(username, completed) {
 
 }
 
+/**
+ * Updates the level of a user
+ * 
+ * @param {String} username 
+ * @param {Int} newLevel 
+ * @returns user with updated level
+ */
 async function updateLevel(username, newLevel) {
 
     if (arguments.length != 2) throw 'Error: Invalid number of arguments!'
@@ -356,17 +364,234 @@ async function updateLevel(username, newLevel) {
     return await this.getUserById(foundUser._id);
 }
 
-async function addAwardToUser(username, award) {
+/**
+ * Adds badge to a user's awards
+ * 
+ * @param {String} username 
+ * @param {ObjectId} awardID 
+ * @returns the user with updated awards
+ */
+async function addAwardToUser(username, awardID) {
+    
+    if (arguments.length != 2) throw 'Error: Invalid number of arguments!'
 
+    //-----------------------------------Check Username-----------------------------------
+
+    if (!username) throw 'Error: Username not supplied!'
+
+    if (typeof username !== 'string') throw 'Error: Username must be a string!'
+
+    if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
+
+    // Check username requirements - decide later
+    const new_username = username.trim();
+
+    //check if username is within database
+    const userCollection = await users();
+    const foundUser = await userCollection.findOne({username: new_username});
+
+    if (!foundUser) throw 'Error: User not found!'
+
+    //-----------------------------------Check awardID -----------------------------------
+
+    if (!awardID) throw 'Error: Award not supplied!'
+
+    const newId = awardID.trim();
+
+    if (!ObjectId.isValid(newId)) {
+        throw 'Error: Award ID is not a valid ObjectID!'
+    }
+
+    const badgeCollection = await badges();
+    const foundBadge = await badgeCollection.findOne({id: newId});
+
+    if (!foundUser) throw 'Error: User not found!'
+
+    //-----------------------------------Add awardID to awards ---------------------------
+   
+    let new_awards = foundUser.awards.push(foundBadge);
+
+    const updatedInfo = await userCollection.updateOne({username: username}, { $set: {awards: new_awards} });
+    if (updatedInfo.modifiedCount === 0) {
+        throw 'Could Not Update Awards Successfully';
+    }
+  
+    return await this.getUserById(foundUser._id);
 }
 
+/**
+ * Adds a user to a user's friends list
+ * 
+ * @param {String} username 
+ * @param {String} friendUsername 
+ * @returns the user with updated friends list
+ */
 async function addFriend(username, friendUsername) {
 
+    if (arguments.length != 2) throw 'Error: Invalid number of arguments!'
+
+    //-----------------------------------Check Username-----------------------------------
+
+    if (!username) throw 'Error: Username not supplied!'
+
+    if (typeof username !== 'string') throw 'Error: Username must be a string!'
+
+    if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
+
+    // Check username requirements - decide later
+    const new_username = username.trim();
+
+    //check if username is within database
+    const userCollection = await users();
+    const foundUser = await userCollection.findOne({username: new_username});
+
+    if (!foundUser) throw 'Error: User not found!'
+
+    //-----------------------------------Check friendUsername------------------------------
+
+    if (!friendUsername) throw 'Error: friendUsername not supplied!'
+
+    if (typeof friendUsername !== 'string') throw 'Error: friendUsername must be a string!'
+
+    if (friendUsername.trim().length === 0) throw 'Error: friendUsername cannot be empty or only spaces!'
+
+    // Check username requirements - decide later
+    const new_friendUsername = username.trim();
+
+    //check if username is within database
+    const foundFriendUser = await userCollection.findOne({username: new_friendUsername});
+
+    if (!foundFriendUser) throw 'Error: friendUser not found!'
+
+    //----------------------------Add new Friend to User's Friends-------------------------
+
+    let new_friends = foundUser.friends.push(friendUsername);
+
+    const updatedInfo1 = await userCollection.updateOne({username: username}, { $set: {friends: new_friends} });
+    if (updatedInfo1.modifiedCount === 0) {
+        throw 'Could Not Update User Friends Successfully';
+    }
+
+    //----------------------------Add User to new Friend's Friends---------------------------
+
+    let new_friends_friendUser = foundFriendUser.friends.push(username);
+
+    const updatedInfo2 = await userCollection.updateOne({username: friendUsername}, { $set: {friends: new_friends_friendUser} });
+    if (updatedInfo2.modifiedCount === 0) {
+        throw 'Could Not Update FriendUser Friends Successfully';
+    }
+  
+    return await this.getUserById(foundUser._id);
 }
 
+/**
+ * Removes a user to a user's friends list
+ * 
+ * @param {String} username 
+ * @param {String} friendUsername 
+ * @returns the user with updated friends list
+ */
 async function removeFriend(username, friendUsername) {
 
+    if (arguments.length != 2) throw 'Error: Invalid number of arguments!'
+
+    //-----------------------------------Check Username-----------------------------------
+
+    if (!username) throw 'Error: Username not supplied!'
+
+    if (typeof username !== 'string') throw 'Error: Username must be a string!'
+
+    if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
+
+    // Check username requirements - decide later
+    const new_username = username.trim();
+
+    //check if username is within database
+    const userCollection = await users();
+    const foundUser = await userCollection.findOne({username: new_username});
+
+    if (!foundUser) throw 'Error: User not found!'
+
+    //-----------------------------------Check friendUsername------------------------------
+
+    if (!friendUsername) throw 'Error: friendUsername not supplied!'
+
+    if (typeof friendUsername !== 'string') throw 'Error: friendUsername must be a string!'
+
+    if (friendUsername.trim().length === 0) throw 'Error: friendUsername cannot be empty or only spaces!'
+
+    // Check username requirements - decide later
+    const new_friendUsername = username.trim();
+
+    //check if username is within database
+    const foundFriendUser = await userCollection.findOne({username: new_friendUsername});
+
+    if (!foundFriendUser) throw 'Error: friendUser not found!'
+
+    //----------------------------Remove Friend from User's Friends-------------------------
+
+    let new_friends = foundUser.friends;
+
+    for( var i = 0; i < new_friends.length; i++){ 
+    
+        if ( new_friends[i] === new_friendUsername) { 
+            new_friends.splice(i, 1); 
+        }
+    }
+
+    const updatedInfo1 = await userCollection.updateOne({username: username}, { $set: {friends: new_friends} });
+    if (updatedInfo1.modifiedCount === 0) {
+        throw 'Could Not Update User Friends Successfully';
+    }
+
+    //----------------------------Add User to new Friend's Friends---------------------------
+
+    let new_friends_friendUser = foundFriendUser.friends;
+
+    for( var i = 0; i < new_friends_friendUser.length; i++){ 
+    
+        if ( new_friends_friendUser[i] === new_username) { 
+            new_friends_friendUser.splice(i, 1); 
+        }
+    }
+
+    const updatedInfo2 = await userCollection.updateOne({username: friendUsername}, { $set: {friends: new_friends_friendUser} });
+    if (updatedInfo2.modifiedCount === 0) {
+        throw 'Could Not Update FriendUser Friends Successfully';
+    }
+  
+    return await this.getUserById(foundUser._id);
 }
+
+/**
+ * Deletes a user
+ * 
+ * @param {ObjectId} userId 
+ * @returns true if the user is successfully deleted
+ */
+ async function deleteUser(userId) {
+
+    if (arguments.length != 1) throw 'Error: Invalid number of arguments!'
+
+     //-----------------------------------Check userId -----------------------------------
+
+    if (!userId) throw 'Error: UserID must be supplied!';
+
+    if (typeof userId !== 'string') throw 'Error: UserID must be a string!';
+
+    if (userId.trim().length === 0) throw 'Error: UserID cannot be an empty string or just spaces';
+    
+    userId = userId.trim();
+    if (!ObjectId.isValid(userId)) throw 'Error: UserID given is an invalid object ID';
+
+    const userCollection = await users();
+    const deletionInfo = await userCollection.deleteOne({_id: ObjectId(userId)});
+
+    if (deletionInfo.deletedCount === 0) {
+      throw `Could not delete User with id of ${userId}`;
+    }
+    return {deleted: true};
+ }
 
 module.exports = {
     createUser,
@@ -376,5 +601,6 @@ module.exports = {
     updateLevel,
     addAwardToUser,
     addFriend,
-    removeFriend
+    removeFriend,
+    deleteUser
 }

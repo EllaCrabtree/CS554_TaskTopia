@@ -28,7 +28,7 @@ async function testUsers() {
     //-----------------Checking updateLevel()-----------------
 
     try {
-        user2 = await users.createUser("Bella", "Cruz", "BellaTheBaddie", "TopSecret123", "Baddie@gmail.com")
+        user2 = await users.createUser("Bella", "Cruz", "BellaTheBaddie", "TopSecret123", "Baddie@gmail.com");
     }
     catch (e) {
         console.log(e);
