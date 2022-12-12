@@ -122,7 +122,7 @@ async function removeBadge(id) {
  * @returns updated badge
  */
 async function updateBadge(id, building, ptsNeeded, description, type) {
-    if (arguments.length != 4) throw `Incorrect number of arguments passed to 'updateBadge'`;
+    if (arguments.length != 5) throw `Incorrect number of arguments passed to 'updateBadge'`;
 
     if (!id) throw `Id cannot be empty.`;
     if (typeof id != 'string') throw `Id must be a string.`;
