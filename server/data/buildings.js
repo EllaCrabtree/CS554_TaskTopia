@@ -1,6 +1,6 @@
 const mongoCollections = require('../config/mongoCollections');
 const buildings = mongoCollections.buildings;
-const buildingCodes = require("./data/buildingCodes")
+const buildingCodes = require("./buildingCodes")
 const { ObjectId } = require("mongodb");
 
 async function createBuilding(buildingCode, xp, xpMax, level) {
@@ -66,7 +66,7 @@ async function getBuilding(id) {
     return building;
 }
 
-async function updateBuilding(id,buildingCode, xp, xpMax, level, Avatar, Tasks) {
+async function updateBuilding(id, buildingCode, xp, xpMax, level, Avatar, Tasks) {
     //Check Arguments
     if (arguments.length !== 7) throw 'You must provide 7 arguments for your building (id,buildingCode,xp,xpMax,level,Avatar,Tasks)';
     if (!id) throw 'You must provide an id for your building';
@@ -77,7 +77,7 @@ async function updateBuilding(id,buildingCode, xp, xpMax, level, Avatar, Tasks) 
     if (!Avatar) throw 'You must provide an Avatar for your building';
     if (!Tasks) throw 'You must provide an Tasks for your building';
 
-    if(typeof id !== 'string') throw 'id must be a string';
+    if (typeof id !== 'string') throw 'id must be a string';
     id = id.trim();
     if (id.length === 0) throw 'id must not be empty';
     if (!ObjectId.isValid(id)) throw 'id must be a valid ObjectId';
@@ -101,11 +101,11 @@ async function updateBuilding(id,buildingCode, xp, xpMax, level, Avatar, Tasks) 
     if (level < 0) throw 'level must be a positive number';
 
     //Check Avatar [TODO]
-    if(typeof Avatar !== 'object') throw 'Avatar must be an object';
-    if(!Array.isArray(Avatar)) throw 'Avatar must be an array';
+    if (typeof Avatar !== 'object') throw 'Avatar must be an object';
+    if (!Array.isArray(Avatar)) throw 'Avatar must be an array';
     //Check Tasks [TODO]
-    if(typeof Tasks !== 'object') throw 'Tasks must be an object';
-    if(!Array.isArray(Tasks)) throw 'Tasks must be an array';
+    if (typeof Tasks !== 'object') throw 'Tasks must be an object';
+    if (!Array.isArray(Tasks)) throw 'Tasks must be an array';
 
     const buildingCollection = await buildings();
     const updatedBuilding = {

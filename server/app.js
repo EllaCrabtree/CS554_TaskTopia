@@ -3,8 +3,13 @@ const app = express();
 const static = express.static(__dirname + '/public');
 const configRoutes = require('./routes');
 const session = require('express-session');
+const redis = require('redis');
+const client = redis.createClient();
+client.connect().then(() => { });
 
-app.use;
+const cors = require('cors');
+app.use(cors());
+
 app.use('/public', static);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,6 +33,33 @@ app.use('/private', (req, res, next) => {
     }
 });
 
+//Check if badge exists in cache
+app.use('/badge/:id', async (req, res, next) => {
+    if (req.originalUrl !== '/badge/all') {
+        let exists = await client.HEXISTS("badge", req.params.id);
+        if (exists) {
+            let badge = await client.HGET("badge", req.params.id);
+            return res.json(JSON.parse(badge));
+        } else {
+            next();
+        }
+    }
+    else {
+        next();
+    }
+})
+
+//Check if all badges exists in cache
+app.use('/badge/all', async (req, res, next) => {
+    let exists = await client.HEXISTS("allBadges", "all");
+    if (exists) {
+        let badge = await client.HGET("allBadges", "all");
+        return res.json(JSON.parse(badge));
+    } else {
+        next();
+    }
+})
+
 app.use(async (req, res, next) => {
     let date = new Date().toUTCString();
     let method = req.method;
@@ -39,7 +71,7 @@ app.use(async (req, res, next) => {
 
 configRoutes(app);
 
-app.listen(3000, () => {
+app.listen(4000, () => {
     console.log("We've now got a server!");
-    console.log('Your routes will be running on http://localhost:3000');
+    console.log('Your routes will be running on http://localhost:4000');
 });

@@ -3,7 +3,7 @@
  * 
  * to use:
  *      const buildingCodes = require("./data/buildingCodes")
- *      buildingCodes.ADMIN => returns string "ADMIN"
+ *      buildingCodes.BuildingCodes.ADMIN => returns string "ADMIN"
  */
 async function isValidBuildingCode(buildingCode) {
     return Object.values(BuildingCodes).includes(buildingCode);
@@ -18,4 +18,4 @@ BuildingCodes = {
     PARK: "PARK"
 }
 
-module.exports = {BuildingCodes, isValidBuildingCode};
+module.exports = { BuildingCodes, isValidBuildingCode };

@@ -71,31 +71,36 @@ async function testUsers() {
 
 async function checkBadges() {
     let user1, badgeSucc;
-    user1 = await users.createUser('Kera', 'McGovern', 'kmcgo', 'password1$', 'kmcgov@gmail.com')
+    try {
+        user1 = await users.createUser('Kera', 'McGovern', 'kmcgo', 'password1$', 'kmcgov@gmail.com')
+    }
+    catch (e) {
+        console.log(`ERROR: ${e}`);
+    }
 
     try {
-        badgeSucc = await badgeData.createBadge(buildingCodes.ADMIN, 30, "description");
+        badgeSucc = await badgeData.createBadge(buildingCodes.BuildingCodes.ADMIN, 30, "description", "BRONZE");
         console.log('Badges Test 1 Success!')
     } catch (e) {
         console.log(`Badges Test 1 Failed! ${e}`)
     }
 
     try {
-        let badgeRes = await badgeData.createBadge(buildingCodes.ADMIN, null, "description");
+        let badgeRes = await badgeData.createBadge(buildingCodes.BuildingCodes.ADMIN, null, "description", "BRONZE");
         console.log('Badges Test 2 Failed!')
     } catch (e) {
         console.log(`Badges Test 2 Success! ${e}`)
     }
 
     try {
-        let badgeRes = await badgeData.createBadge(30, 30, "description");
+        let badgeRes = await badgeData.createBadge(30, 30, "description", "BRONZE");
         console.log('Badges Test 3 Failed!')
     } catch (e) {
         console.log(`Badges Test 3 Success! ${e}`)
     }
 
     try {
-        let badgeRes = await badgeData.createBadge(buildingCodes.ADMIN, 30, "");
+        let badgeRes = await badgeData.createBadge(buildingCodes.BuildingCodes.ADMIN, 30, "", "BRONZE");
         console.log('Badges Test 4 Failed!')
     } catch (e) {
         console.log(`Badges Test 4 Success! ${e}`)
@@ -130,7 +135,7 @@ async function checkBadges() {
     }
 
     try {
-        let badgeRes = await badgeData.updateBadge(badgeSucc._id, buildingCodes.EDUCATION, 40, "dv");
+        let badgeRes = await badgeData.updateBadge(badgeSucc._id, buildingCodes.BuildingCodes.EDUCATION, 40, "dv", "GOLD");
         console.log(`Badges Test 7 Success!`);
         console.log(`old data`, badgeSucc);
         console.log(`updated data`, badgeRes);
@@ -161,7 +166,7 @@ async function checkBadges() {
     }
 
     try {
-        let badgeRes = await badgeData.updateBadge(ObjectId().toString(), buildingCodes.ADMIN, 40, "dv");
+        let badgeRes = await badgeData.updateBadge(ObjectId().toString(), buildingCodes.BuildingCodes.ADMIN, 40, "dv", "GOLD");
         console.log(`Badges Test 11 Failed!`);
     } catch (e) {
         console.log(`Badges Test 11 Success! ${e}`)

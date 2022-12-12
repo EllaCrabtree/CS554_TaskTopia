@@ -222,7 +222,7 @@ async function checkIfUserGetsBadge(userName, badgeId) {
     for (let i = 0; i < foundUser.buildings.length; i++) {
         let building = await buildingCollection.findOne({ _id: ObjectId(foundUser.buildings[i]) });
         if (!building) throw 'Error: Building not found!';
-        if (building.type === foundBadge.building && building.currXP >= foundBadge.ptsNeeded) {
+        if (building.type === foundBadge.building && building.xp >= foundBadge.ptsNeeded) {
             return foundBadge;
         }
     }
