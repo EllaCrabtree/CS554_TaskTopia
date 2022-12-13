@@ -1,10 +1,10 @@
 import './App.css';
-import AllBadges from './Components/AllBadges';
+import AddTask from './Components/AddTask';
 
 function App() {
   return (
     <div className="App">
-      <AllBadges />
+      <AddTask />
     </div>
   );
 }

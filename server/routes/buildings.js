@@ -138,15 +138,16 @@ router.put('/:id', async (req, res) => {
         res.status(400).json({ error: 'You must provide a description for the building' });
         return;
     }
-    try{
+    try {
         const updatedBuilding = await buildingData.updateBuilding(req.params.id, buildingData);
-        res.status(200).json({message: "Building updated"});
-    } catch{
-        res.status(404).json({error: "Building not found"});
+        res.status(200).json({ message: "Building updated" });
+    } catch {
+        res.status(404).json({ error: "Building not found" });
     }
 });
 
 router.delete('/:id', async (req, res) => {
+    if (!req.params.id) return res.status(400).json({ error: 'You must provide an id for the building to delete it.' });
     try {
         await buildingData.removeBuilding(req.params.id);
         res.sendStatus(200);
