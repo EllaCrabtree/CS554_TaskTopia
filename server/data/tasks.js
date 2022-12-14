@@ -1,16 +1,14 @@
 const mongoCollections = require("../config/mongoCollections");
 const buildings = mongoCollections.buildings;
 const { ObjectId } = require("mongodb");
+const moment = require('moment');
 
-async function createTask(buildingId, name, datePosted, dateDue, notes, isOverdue, isCompleted) {
+async function createTask(buildingId, name, dateDue, notes) {
     if (arguments.length !== 7) throw 'You must provide 7 arguments for your task (buildingId,name,datePosted,dateDue,notes,isOverdue,isCompleted)';
     if (!buildingId) throw 'You must provide a buildingId for your task';
     if (!name) throw 'You must provide a name for your task';
-    if (!datePosted) throw 'You must provide a datePosted for your task';
     if (!dateDue) throw 'You must provide a dateDue for your task';
     if (!notes) throw 'You must provide a notes for your task';
-    if (!isOverdue) throw 'You must provide a isOverdue for your task';
-    if (!isCompleted) throw 'You must provide a isCompleted for your task';
 
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
@@ -21,32 +19,27 @@ async function createTask(buildingId, name, datePosted, dateDue, notes, isOverdu
     name = name.trim();
     if (name.length === 0) throw 'name must not be empty';
 
-    if (typeof datePosted !== 'string') throw 'datePosted must be a string';
-    datePosted = datePosted.trim();
-    if (datePosted.length === 0) throw 'datePosted must not be empty';
-
     if (typeof dateDue !== 'string') throw 'dateDue must be a string';
     dateDue = dateDue.trim();
     if (dateDue.length === 0) throw 'dateDue must not be empty';
 
     if (!Array.isArray(notes)) throw 'notes must be an array';
 
-    if (typeof isOverdue !== 'boolean') throw 'isOverdue must be a boolean';
-
-    if (typeof isCompleted !== 'boolean') throw 'isCompleted must be a boolean';
-
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
     if (building === null) throw 'No building with that id';
+
+    let datePosted = moment().format('YYYY-MM-DD').toString()
+    let dueDateMoment = moment(dateDue, 'YYYY-MM-DD').toString();
 
     const newTask = {
         _id: new ObjectId(),
         name: name,
         datePosted: datePosted,
-        dateDue: dateDue,
+        dateDue: dueDateMoment,
         notes: notes,
-        isOverdue: isOverdue,
-        isCompleted: isCompleted
+        isOverdue: false,
+        isCompleted: false
     };
 
     building.tasks.push(newTask);
@@ -131,7 +124,7 @@ async function updateTask(buildingId, taskId, updatedTask) {
         updatedTask.datePosted = updatedTask.datePosted.trim();
         if (updatedTask.datePosted.length === 0) throw 'datePosted must not be empty';
 
-        updatedTaskData.datePosted = updatedTask.datePosted;
+        updatedTaskData.datePosted = moment(updatedTask.datePosted, 'YYYY-MM-DD').toString();
     }
 
     if (updatedTask.dateDue) {
@@ -139,7 +132,7 @@ async function updateTask(buildingId, taskId, updatedTask) {
         updatedTask.dateDue = updatedTask.dateDue.trim();
         if (updatedTask.dateDue.length === 0) throw 'dateDue must not be empty';
 
-        updatedTaskData.dateDue = updatedTask.dateDue;
+        updatedTaskData.dateDue = moment(updatedTask.dateDue, 'YYYY-MM-DD').toString();
     }
 
     if (updatedTask.notes) {

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import Task from './Task';
 import axios from 'axios';
-
+import Error from './Error';
 
 function AddTask(props) {
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({ buildingId: props.id });
     const [createdTask, setCreated] = useState(undefined);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
@@ -24,7 +24,7 @@ function AddTask(props) {
         }
     };
 
-    return (!createdTask && !err &&
+    return (<div> {!createdTask && !err &&
         <div>
             <div className='add'>
                 <div className='input-selection'>
@@ -53,24 +53,13 @@ function AddTask(props) {
                             placeholder='Notes...'
                         />
                     </label>
-                    <label>
-                        Date Posted:
-                        <input type="date"
-                            onChange={(e) => handleChange(e)}
-                            id='datePosted'
-                            name='datePosted'
-                        />
-                    </label>
                 </div>
                 <button onClick={CreateTask}>Create Task</button>
             </div>
-            {createdTask && !err && <Task buildingId={props.id} taskId={createdTask._id} />}
-            {err &&
-                <div>
-                    <h1>{errData.response.status}: {errData.response.statusText}</h1>
-                    <p>{errData.response.data.error}</p>
-                </div>}
-        </div>
+        </div>}
+        {createdTask && !err && <Task buildingId={props.id} taskId={createdTask._id} />}
+        {err && <Error error={errData} />}
+    </div>
     );
 }
 

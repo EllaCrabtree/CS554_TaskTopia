@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Building from './Building';
 import axios from 'axios';
+import Error from './Error';
 
 
 function AddBuilding() {
@@ -24,62 +25,60 @@ function AddBuilding() {
         }
     };
 
-    return (!createdBuilding && !err &&
-        <div>
-            <div className='add'>
-                <div className='input-selection'>
-                    <label>
-                        Building Type:
-                        <select
-                            onChange={(e) => handleChange(e)}
-                            id='buildingType'
-                            name='buildingType'
-                        >
-                            <option value="ADMIN">ADMIN</option>
-                            <option value="EDUCATION">EDUCATION</option>
-                            <option value="GARDEN">GARDEN</option>
-                            <option value="HOME">HOME</option>
-                            <option value="PARK">PARK</option>
-                            <option value="STORE">STORE</option>
-                        </select>
-                    </label>
-                    <label>
-                        XP:
-                        <input
-                            onChange={(e) => handleChange(e)}
-                            id='xp'
-                            name='xp'
-                            placeholder='XP...'
-                        />
-                    </label>
-                    <label>
-                        Max XP:
-                        <input
-                            onChange={(e) => handleChange(e)}
-                            id='xpMax'
-                            name='xpMax'
-                            placeholder='Max XP...'
-                        />
-                    </label>
-                    <label>
-                        Level:
-                        <input
-                            onChange={(e) => handleChange(e)}
-                            id='level'
-                            name='level'
-                            placeholder='Level...'
-                        />
-                    </label>
+    return (<div>
+        {!createdBuilding && !err &&
+            <div>
+                <div className='add'>
+                    <div className='input-selection'>
+                        <label>
+                            Building Type:
+                            <select
+                                onChange={(e) => handleChange(e)}
+                                id='buildingType'
+                                name='buildingType'
+                            >
+                                <option value="ADMIN">ADMIN</option>
+                                <option value="EDUCATION">EDUCATION</option>
+                                <option value="GARDEN">GARDEN</option>
+                                <option value="HOME">HOME</option>
+                                <option value="PARK">PARK</option>
+                                <option value="STORE">STORE</option>
+                            </select>
+                        </label>
+                        <label>
+                            XP:
+                            <input
+                                onChange={(e) => handleChange(e)}
+                                id='xp'
+                                name='xp'
+                                placeholder='XP...'
+                            />
+                        </label>
+                        <label>
+                            Max XP:
+                            <input
+                                onChange={(e) => handleChange(e)}
+                                id='xpMax'
+                                name='xpMax'
+                                placeholder='Max XP...'
+                            />
+                        </label>
+                        <label>
+                            Level:
+                            <input
+                                onChange={(e) => handleChange(e)}
+                                id='level'
+                                name='level'
+                                placeholder='Level...'
+                            />
+                        </label>
+                    </div>
+                    <button onClick={CreateBuilding}>Create Building</button>
                 </div>
-                <button onClick={CreateBuilding}>Create Building</button>
-            </div>
-            {createdBuilding && !err && <Building id={createdBuilding._id} />}
-            {err &&
-                <div>
-                    <h1>{errData.response.status}: {errData.response.statusText}</h1>
-                    <p>{errData.response.data.error}</p>
-                </div>}
-        </div>
+            </div>}
+        {createdBuilding && !err && <Building id={createdBuilding._id} />}
+        {err && <Error error={errData} />}
+    </div>
     );
 }
 
