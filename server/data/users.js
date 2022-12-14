@@ -4,6 +4,8 @@ const users = mongoCollections.users;
 const badges = mongoCollections.badges;
 const { ObjectId } = require("mongodb");
 const bcrypt = require('bcrypt');
+const buildingsData = require('./buildings');
+const tasksData = require('./tasks');
 
 
 async function createUser(firstName, lastName, username, password, email) {
@@ -62,7 +64,7 @@ async function createUser(firstName, lastName, username, password, email) {
     const new_email = email.trim();
 
     const userCollection = await users(); //Initializing User Collection Variable
-    const foundEmail = await userCollection.findOne({email: new_email});
+    const foundEmail = await userCollection.findOne({ email: new_email });
 
     if (foundEmail) {
         throw 'Error: Email already in use!'
@@ -93,9 +95,9 @@ async function createUser(firstName, lastName, username, password, email) {
         throw 'Server Error: Username must be at least 4 characters or longer!'
     }
 
-    
+
     //check if username is within database
-    const foundUser = await userCollection.findOne({username: new_username});
+    const foundUser = await userCollection.findOne({ username: new_username });
 
     if (foundUser) {
         throw 'Error: Username already in use!'
@@ -152,7 +154,7 @@ async function createUser(firstName, lastName, username, password, email) {
 
     const newId = insertInfo.insertedId;
     newUser = await getUserById(newId.toString())
-    return newUser 
+    return newUser
 }
 
 async function checkUser(username, password) {
@@ -178,9 +180,9 @@ async function checkUser(username, password) {
 
     const new_username = username.trim();
 
-    
+
     //check if username is within database
-    const foundUser = await userCollection.findOne({username: new_username});
+    const foundUser = await userCollection.findOne({ username: new_username });
 
     if (!foundUser) {
         throw 'Server Error: Incorrect username/password!'
@@ -205,7 +207,7 @@ async function checkUser(username, password) {
     const match = await bcrypt.compare(password.trim(), foundUser.password);
 
     if (match) {
-        return {_id: foundUser._id.toString(), username: foundUser.username}
+        return { _id: foundUser._id.toString(), username: foundUser.username }
     } else {
         throw 'Server error: Invalid username/password!'
     }
@@ -239,8 +241,8 @@ async function getUserById(userId) {
     }
 
     const userCollection = await users()
-    const user = await userCollection.findOne({_id: ObjectId(newId)})
-    
+    const user = await userCollection.findOne({ _id: ObjectId(newId) })
+
     if (!user) {
         throw 'Server Error: User not found for chosen ID';
     }
@@ -273,11 +275,11 @@ async function addBuildingToUser(username, buildingID) {
     const new_username = username.trim();
 
     //Will not check username requirements (only in create)
-    
+
     const userCollection = await users(); //Initializing User Collection Variable
 
     //check if username is within database
-    const foundUser = await userCollection.findOne({username: new_username});
+    const foundUser = await userCollection.findOne({ username: new_username });
 
 
     if (!foundUser) {
@@ -295,12 +297,12 @@ async function addBuildingToUser(username, buildingID) {
     if (!ObjectId.isValid(newBuildingID)) throw 'Error: Building ID is not a valid ObjectID!'
 
     const update = await userCollection.updateOne(
-        {_id: ObjectId(foundUser._id)},
-        { $addToSet: {buildings: ObjectId(newBuildingID)}}
+        { _id: ObjectId(foundUser._id) },
+        { $addToSet: { buildings: ObjectId(newBuildingID) } }
     )
 
     if (!update.matchedCount && !update.modifiedCount) {
-       throw 'AddBuildings: Update failed';
+        throw 'AddBuildings: Update failed';
     }
 
     return newBuildingID;
@@ -342,7 +344,7 @@ async function updateLevel(username, newLevel) {
 
     //check if username is within database
     const userCollection = await users();
-    const foundUser = await userCollection.findOne({username: new_username});
+    const foundUser = await userCollection.findOne({ username: new_username });
 
     if (!foundUser) throw 'Error: User not found!'
 
@@ -356,11 +358,11 @@ async function updateLevel(username, newLevel) {
     if (newLevel < 1) throw 'Error: New Level cannot be less than 1!'
     if (newLevel > 100) throw 'Error: New Level cannot be greater than 100!'
 
-    const updatedInfo = await userCollection.updateOne({username: username}, { $set: {level: newLevel} });
+    const updatedInfo = await userCollection.updateOne({ username: username }, { $set: { level: newLevel } });
     if (updatedInfo.modifiedCount === 0) {
         throw 'Could Not Update User Successfully';
     }
-  
+
     return await this.getUserById(foundUser._id);
 }
 
@@ -372,7 +374,7 @@ async function updateLevel(username, newLevel) {
  * @returns the user with updated awards
  */
 async function addAwardToUser(username, awardID) {
-    
+
     if (arguments.length != 2) throw 'Error: Invalid number of arguments!'
 
     //-----------------------------------Check Username-----------------------------------
@@ -388,7 +390,7 @@ async function addAwardToUser(username, awardID) {
 
     //check if username is within database
     const userCollection = await users();
-    const foundUser = await userCollection.findOne({username: new_username});
+    const foundUser = await userCollection.findOne({ username: new_username });
 
     if (!foundUser) throw 'Error: User not found!'
 
@@ -403,19 +405,19 @@ async function addAwardToUser(username, awardID) {
     }
 
     const badgeCollection = await badges();
-    const foundBadge = await badgeCollection.findOne({id: newId});
+    const foundBadge = await badgeCollection.findOne({ id: newId });
 
     if (!foundUser) throw 'Error: User not found!'
 
     //-----------------------------------Add awardID to awards ---------------------------
-   
+
     let new_awards = foundUser.awards.push(foundBadge);
 
-    const updatedInfo = await userCollection.updateOne({username: username}, { $set: {awards: new_awards} });
+    const updatedInfo = await userCollection.updateOne({ username: username }, { $set: { awards: new_awards } });
     if (updatedInfo.modifiedCount === 0) {
         throw 'Could Not Update Awards Successfully';
     }
-  
+
     return await this.getUserById(foundUser._id);
 }
 
@@ -443,7 +445,7 @@ async function addFriend(username, friendUsername) {
 
     //check if username is within database
     const userCollection = await users();
-    const foundUser = await userCollection.findOne({username: new_username});
+    const foundUser = await userCollection.findOne({ username: new_username });
 
     if (!foundUser) throw 'Error: User not found!'
 
@@ -459,7 +461,7 @@ async function addFriend(username, friendUsername) {
     const new_friendUsername = username.trim();
 
     //check if username is within database
-    const foundFriendUser = await userCollection.findOne({username: new_friendUsername});
+    const foundFriendUser = await userCollection.findOne({ username: new_friendUsername });
 
     if (!foundFriendUser) throw 'Error: friendUser not found!'
 
@@ -467,7 +469,7 @@ async function addFriend(username, friendUsername) {
 
     let new_friends = foundUser.friends.push(friendUsername);
 
-    const updatedInfo1 = await userCollection.updateOne({username: username}, { $set: {friends: new_friends} });
+    const updatedInfo1 = await userCollection.updateOne({ username: username }, { $set: { friends: new_friends } });
     if (updatedInfo1.modifiedCount === 0) {
         throw 'Could Not Update User Friends Successfully';
     }
@@ -476,11 +478,11 @@ async function addFriend(username, friendUsername) {
 
     let new_friends_friendUser = foundFriendUser.friends.push(username);
 
-    const updatedInfo2 = await userCollection.updateOne({username: friendUsername}, { $set: {friends: new_friends_friendUser} });
+    const updatedInfo2 = await userCollection.updateOne({ username: friendUsername }, { $set: { friends: new_friends_friendUser } });
     if (updatedInfo2.modifiedCount === 0) {
         throw 'Could Not Update FriendUser Friends Successfully';
     }
-  
+
     return await this.getUserById(foundUser._id);
 }
 
@@ -508,7 +510,7 @@ async function removeFriend(username, friendUsername) {
 
     //check if username is within database
     const userCollection = await users();
-    const foundUser = await userCollection.findOne({username: new_username});
+    const foundUser = await userCollection.findOne({ username: new_username });
 
     if (!foundUser) throw 'Error: User not found!'
 
@@ -524,7 +526,7 @@ async function removeFriend(username, friendUsername) {
     const new_friendUsername = username.trim();
 
     //check if username is within database
-    const foundFriendUser = await userCollection.findOne({username: new_friendUsername});
+    const foundFriendUser = await userCollection.findOne({ username: new_friendUsername });
 
     if (!foundFriendUser) throw 'Error: friendUser not found!'
 
@@ -532,14 +534,14 @@ async function removeFriend(username, friendUsername) {
 
     let new_friends = foundUser.friends;
 
-    for( var i = 0; i < new_friends.length; i++){ 
-    
-        if ( new_friends[i] === new_friendUsername) { 
-            new_friends.splice(i, 1); 
+    for (var i = 0; i < new_friends.length; i++) {
+
+        if (new_friends[i] === new_friendUsername) {
+            new_friends.splice(i, 1);
         }
     }
 
-    const updatedInfo1 = await userCollection.updateOne({username: username}, { $set: {friends: new_friends} });
+    const updatedInfo1 = await userCollection.updateOne({ username: username }, { $set: { friends: new_friends } });
     if (updatedInfo1.modifiedCount === 0) {
         throw 'Could Not Update User Friends Successfully';
     }
@@ -548,18 +550,18 @@ async function removeFriend(username, friendUsername) {
 
     let new_friends_friendUser = foundFriendUser.friends;
 
-    for( var i = 0; i < new_friends_friendUser.length; i++){ 
-    
-        if ( new_friends_friendUser[i] === new_username) { 
-            new_friends_friendUser.splice(i, 1); 
+    for (var i = 0; i < new_friends_friendUser.length; i++) {
+
+        if (new_friends_friendUser[i] === new_username) {
+            new_friends_friendUser.splice(i, 1);
         }
     }
 
-    const updatedInfo2 = await userCollection.updateOne({username: friendUsername}, { $set: {friends: new_friends_friendUser} });
+    const updatedInfo2 = await userCollection.updateOne({ username: friendUsername }, { $set: { friends: new_friends_friendUser } });
     if (updatedInfo2.modifiedCount === 0) {
         throw 'Could Not Update FriendUser Friends Successfully';
     }
-  
+
     return await this.getUserById(foundUser._id);
 }
 
@@ -569,29 +571,53 @@ async function removeFriend(username, friendUsername) {
  * @param {ObjectId} userId 
  * @returns true if the user is successfully deleted
  */
- async function deleteUser(userId) {
+async function deleteUser(userId) {
 
     if (arguments.length != 1) throw 'Error: Invalid number of arguments!'
 
-     //-----------------------------------Check userId -----------------------------------
+    //-----------------------------------Check userId -----------------------------------
 
     if (!userId) throw 'Error: UserID must be supplied!';
 
     if (typeof userId !== 'string') throw 'Error: UserID must be a string!';
 
     if (userId.trim().length === 0) throw 'Error: UserID cannot be an empty string or just spaces';
-    
+
     userId = userId.trim();
     if (!ObjectId.isValid(userId)) throw 'Error: UserID given is an invalid object ID';
 
     const userCollection = await users();
-    const deletionInfo = await userCollection.deleteOne({_id: ObjectId(userId)});
+    const deletionInfo = await userCollection.deleteOne({ _id: ObjectId(userId) });
 
     if (deletionInfo.deletedCount === 0) {
-      throw `Could not delete User with id of ${userId}`;
+        throw `Could not delete User with id of ${userId}`;
     }
-    return {deleted: true};
- }
+    return { deleted: true };
+}
+
+async function emailUpcomingDueDates(userId) {
+    if (arguments.length != 1) throw 'Error: Invalid number of arguments!'
+    if (!userId) throw 'Error: UserID must be supplied!';
+    if (typeof userId !== 'string') throw 'Error: UserID must be a string!';
+    if (userId.trim().length === 0) throw 'Error: UserID cannot be an empty string or just spaces';
+    userId = userId.trim();
+    if (!ObjectId.isValid(userId)) throw 'Error: UserID given is an invalid object ID';
+
+    const user = await getUserById(userId);
+    let allTaskObjects = [];
+
+    for (let i = 0; i < user.buildings.length; i++) {
+        let building = await buildingsData.getBuilding(user.buildings[i]._id);
+        let taskList = building.Tasks;
+        for (let j = 0; j < taskList.length; j++) {
+            let task = await tasksData.getTask(taskList[j]._id);
+            allTaskObjects.push(task);
+        }
+    }
+
+    //TODO
+
+}
 
 module.exports = {
     createUser,
@@ -602,5 +628,6 @@ module.exports = {
     addAwardToUser,
     addFriend,
     removeFriend,
-    deleteUser
+    deleteUser,
+    emailUpcomingDueDates
 }

@@ -3,10 +3,13 @@ import axios from 'axios';
 import AddTask from './AddTask'
 import Task from './Task';
 import Error from './Error';
+import Avatar from './Avatar';
 
 function Building(props) {
     const [buildingData, setBuildingData] = useState(null);
     const [addBtnToggle, setBtnToggle] = useState(false);
+    const [err, setErr] = useState(false);
+    const [errData, setErrData] = useState(undefined);
 
     useEffect(() => {
         async function fetchData() {
@@ -14,6 +17,8 @@ function Building(props) {
                 const { data } = await axios.get(`http://localhost:4000/building/${props.id}`);
                 setBuildingData(data);
             } catch (e) {
+                setErr(true);
+                setErrData(e);
                 console.log(e);
             }
         }

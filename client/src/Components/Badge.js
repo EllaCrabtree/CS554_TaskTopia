@@ -4,6 +4,8 @@ import Error from './Error';
 
 function Badge(props) {
     const [badgeData, setBadgeData] = useState(null);
+    const [err, setErr] = useState(false);
+    const [errData, setErrData] = useState(undefined);
 
     useEffect(() => {
         async function fetchData() {
@@ -11,6 +13,8 @@ function Badge(props) {
                 const { data } = await axios.get(`http://localhost:4000/badge/${props.id}`);
                 setBadgeData(data);
             } catch (e) {
+                setErr(true);
+                setErrData(e);
                 console.log(e);
             }
         }
