@@ -319,6 +319,44 @@ async function addBuildingToUser(username, buildingID) {
 async function updateCompletionFrequency(username, completed) {
 
 }
+/**
+ * Gets a user by username
+ * 
+ * @param {String} username 
+ * @returns the user with the given username
+ */
+ async function getUserByUsername(username) {
+
+    //-----------------------------------Check Arguments-----------------------------------
+    if (arguments.length != 1) {
+        throw 'Error: Invalid number of arguments!'
+    }
+
+    //-----------------------------------Check User ID-----------------------------------
+    if (!username) {
+        throw 'Error: Username is not supplied!'
+    }
+
+    if (typeof username !== 'string') {
+        throw 'Error: Username must be of type string!';
+    }
+
+    if (username.trim().length === 0) {
+        throw 'Error: Username cannot be all spaces or empty!'
+    }
+
+    const newUsername = username.trim();
+
+    const userCollection = await users();
+    const user = await userCollection.findOne({username: newUsername});
+
+    if (!user) {
+        throw 'Server Error: User not found for chosen Username';
+    }
+
+    user.username = user.username.toString();
+    return user;
+}
 
 /**
  * Updates the level of a user
@@ -624,6 +662,7 @@ module.exports = {
     checkUser,
     addBuildingToUser,
     updateCompletionFrequency,
+    getUserByUsername,
     updateLevel,
     addAwardToUser,
     addFriend,

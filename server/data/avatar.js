@@ -1,9 +1,10 @@
 const mongoCollections = require("../config/mongoCollections");
 const buildings = mongoCollections.buildings;
 const { ObjectId } = require("mongodb");
+const im = require('imagemagick');
 
 //Subdocument Avatar for Buildings
-async function createAvatar(buildingId,name, image, welcome, completion, overdue) {
+async function createAvatar(buildingId, name, image, welcome, completion, overdue) {
     if (arguments.length !== 6) throw 'You must provide 6 arguments for your avatar (buildingId,name, image, welcome, completion, overdue)';
     if (!buildingId) throw 'You must provide a buildingId for your avatar';
     if (!name) throw 'You must provide a name for your avatar';
@@ -25,18 +26,21 @@ async function createAvatar(buildingId,name, image, welcome, completion, overdue
     image = image.trim();
     if (image.length === 0) throw 'image must not be empty';
 
-    if(!Array.isArray(welcome)) throw 'welcome must be an array';
-    if(!Array.isArray(completion)) throw 'completion must be an array';
-    if(!Array.isArray(overdue)) throw 'overdue must be an array';
+    if (!Array.isArray(welcome)) throw 'welcome must be an array';
+    if (!Array.isArray(completion)) throw 'completion must be an array';
+    if (!Array.isArray(overdue)) throw 'overdue must be an array';
 
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
     if (building === null) throw 'No building with that id';
 
+    let avatarId = new ObjectId();
+    const pathToImage = cropAvatar(avatarId, image);
+
     const newAvatar = {
-        _id: new ObjectId(),
+        _id: avatarId,
         name: name,
-        image: image,
+        image: pathToImage,
         welcome: welcome,
         completion: completion,
         overdue: overdue
@@ -48,7 +52,7 @@ async function createAvatar(buildingId,name, image, welcome, completion, overdue
     const newId = insertInfo.insertedId;
     const avatar = await this.getAvatar(newId);
     return avatar;
-    
+
 }
 
 async function getAvatar(buildingId, id) {
@@ -89,7 +93,7 @@ async function getAllAvatars(buildingId) {
     return building.avatar;
 }
 
-async function removeAvatar(buildingId,id) {
+async function removeAvatar(buildingId, id) {
     if (!buildingId) throw 'You must provide a buildingId to search for';
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
@@ -147,17 +151,17 @@ async function updateAvatar(id, updatedAvatar) {
     }
 
     if (updatedAvatar.welcome) {
-        if(!Array.isArray(updatedAvatar.welcome)) throw 'welcome must be an array';
+        if (!Array.isArray(updatedAvatar.welcome)) throw 'welcome must be an array';
         updatedAvatarData.welcome = updatedAvatar.welcome;
     }
 
     if (updatedAvatar.completion) {
-        if(!Array.isArray(updatedAvatar.completion)) throw 'completion must be an array';
+        if (!Array.isArray(updatedAvatar.completion)) throw 'completion must be an array';
         updatedAvatarData.completion = updatedAvatar.completion;
     }
 
     if (updatedAvatar.overdue) {
-        if(!Array.isArray(updatedAvatar.overdue)) throw 'overdue must be an array';
+        if (!Array.isArray(updatedAvatar.overdue)) throw 'overdue must be an array';
         updatedAvatarData.overdue = updatedAvatar.overdue;
     }
 
@@ -168,8 +172,29 @@ async function updateAvatar(id, updatedAvatar) {
         _id: ObjectId(id)
     };
     await buildingCollection.updateOne
-    (query, updateCommand);
+        (query, updateCommand);
     return await this.getAvatar(id);
+}
+
+async function cropAvatar(avatarId, url) {
+    if (typeof avatarId !== 'string') throw 'avatarId must be a string';
+    avatarId = avatarId.trim();
+    if (avatarId.length === 0) throw 'avatarId must not be empty';
+    if (!ObjectId.isValid(avatarId)) throw 'avatarId must be a valid ObjectId';
+
+    if (typeof url !== 'string') throw 'image must be a string';
+    url = url.trim();
+    if (url.length === 0) throw 'image must not be empty';
+
+    const res = im.crop({
+        srcPath: url,
+        dstPath: `../avatarImgs/${avatarId}.png`,
+        width: 400,
+        quality: 1,
+        gravity: "Center"
+    });
+
+    return `../avatarImgs/${avatarId}.png`;
 }
 
 module.exports = {
@@ -177,7 +202,8 @@ module.exports = {
     getAvatar,
     getAllAvatars,
     removeAvatar,
-    updateAvatar
+    updateAvatar,
+    cropAvatar
 }
 
 
