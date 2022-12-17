@@ -1,5 +1,6 @@
 const mongoCollections = require('../config/mongoCollections');
 const buildings = mongoCollections.buildings;
+const users = mongoCollections.users;
 const buildingCodes = require("./buildingCodes")
 const { ObjectId } = require("mongodb");
 
@@ -7,7 +8,6 @@ async function createBuilding(buildingCode, xp, xpMax, level) {
     //Check Arguments
     if (arguments.length !== 4) throw 'You must provide 4 arguments for your building (buildingCode,xp,xpMax,level)';
     if (!buildingCode) throw 'You must provide a buildingCode for your building';
-    if (!id) throw 'You must provide an id for your building';
     if (!xp) throw 'You must provide an xp for your building';
     if (!xpMax) throw 'You must provide an xpMax for your building';
     if (!level) throw 'You must provide an level for your building';
@@ -17,12 +17,6 @@ async function createBuilding(buildingCode, xp, xpMax, level) {
     buildingCode = buildingCode.trim();
     if (buildingCode.length === 0) throw 'buildingCode must not be empty';
     if (!buildingCodes.isValidBuildingCode(buildingCode)) throw 'buildingCode must be a valid buildingCode';
-
-    //Check ID
-    if (typeof id !== 'string') throw 'id must be a string';
-    id = id.trim();
-    if (id.length === 0) throw 'id must not be empty';
-    if (!ObjectId.isValid(id)) throw 'id must be a valid ObjectId';
 
     //Check XP
     if (typeof xp !== 'number') throw 'xp must be a number';
@@ -38,7 +32,6 @@ async function createBuilding(buildingCode, xp, xpMax, level) {
 
     const buildingCollection = await buildings();
     const newBuilding = {
-        _id: new ObjectId(),
         buildingCode: buildingCode,
         xp: xp,
         xpMax: xpMax,
@@ -49,7 +42,8 @@ async function createBuilding(buildingCode, xp, xpMax, level) {
     const newInsertInformation = await buildingCollection.insertOne(newBuilding);
     if (newInsertInformation.insertedCount === 0) throw 'Could not add building';
     const newId = newInsertInformation.insertedId;
-    const building = await this.getBuilding(newId);
+
+    const building = await this.getBuilding(newId.toString());
     return building;
 }
 
@@ -63,6 +57,8 @@ async function getBuilding(id) {
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(id) });
     if (building === null) throw 'No building with that id';
+
+    building._id = building._id.toString();
     return building;
 }
 
@@ -146,10 +142,30 @@ async function getAllBuildings() {
     return buildings;
 }
 
+async function getUserBuildings(username) {
+    if (arguments.length != 1) throw 'Error: Invalid number of arguments for getUserBuildings!'
+    if (!username) throw 'Error: Username not supplied!'
+    if (typeof username !== 'string') throw 'Error: Username must be a string!'
+    if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
+    const new_username = username.trim().toLowerCase();
+
+    const userCollection = await users();
+    const foundUser = await userCollection.findOne({ username: new_username });
+
+    if (!foundUser) throw 'Error: User not found!';
+
+
+    foundUser.buildings.forEach(element => {
+        element = element.toString();
+    })
+    return foundUser.buildings
+}
+
 module.exports = {
     createBuilding,
     getBuilding,
     updateBuilding,
     deleteBuilding,
-    getAllBuildings
+    getAllBuildings,
+    getUserBuildings
 };

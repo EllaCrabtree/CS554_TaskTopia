@@ -178,7 +178,7 @@ async function checkUser(username, password) {
         throw 'Server Error: Username cannot be empty or only spaces!'
     }
 
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();;
 
 
     //check if username is within database
@@ -272,7 +272,7 @@ async function addBuildingToUser(username, buildingID) {
     }
 
     // Trim off spaces from username
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();;
 
     //Will not check username requirements (only in create)
 
@@ -317,7 +317,7 @@ async function addBuildingToUser(username, buildingID) {
 //This one we may want to do later once we understand how this is updated
 // ~~ I agree, we'll wait
 async function updateCompletionFrequency(username, completed) {
-
+    //make sure to - username.toLowerCase();
 }
 /**
  * Gets a user by username
@@ -325,7 +325,7 @@ async function updateCompletionFrequency(username, completed) {
  * @param {String} username 
  * @returns the user with the given username
  */
- async function getUserByUsername(username) {
+async function getUserByUsername(username) {
 
     //-----------------------------------Check Arguments-----------------------------------
     if (arguments.length != 1) {
@@ -345,10 +345,10 @@ async function updateCompletionFrequency(username, completed) {
         throw 'Error: Username cannot be all spaces or empty!'
     }
 
-    const newUsername = username.trim();
+    const newUsername = username.trim().toLowerCase();;
 
     const userCollection = await users();
-    const user = await userCollection.findOne({username: newUsername});
+    const user = await userCollection.findOne({ username: newUsername });
 
     if (!user) {
         throw 'Server Error: User not found for chosen Username';
@@ -378,7 +378,7 @@ async function updateLevel(username, newLevel) {
     if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();;
 
     //check if username is within database
     const userCollection = await users();
@@ -424,7 +424,7 @@ async function addAwardToUser(username, awardID) {
     if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();;
 
     //check if username is within database
     const userCollection = await users();
@@ -479,7 +479,7 @@ async function addFriend(username, friendUsername) {
     if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();;
 
     //check if username is within database
     const userCollection = await users();
@@ -496,7 +496,7 @@ async function addFriend(username, friendUsername) {
     if (friendUsername.trim().length === 0) throw 'Error: friendUsername cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_friendUsername = username.trim();
+    const new_friendUsername = friendUsername.trim().toLowerCase();;
 
     //check if username is within database
     const foundFriendUser = await userCollection.findOne({ username: new_friendUsername });
@@ -544,7 +544,7 @@ async function removeFriend(username, friendUsername) {
     if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();
 
     //check if username is within database
     const userCollection = await users();
@@ -561,7 +561,7 @@ async function removeFriend(username, friendUsername) {
     if (friendUsername.trim().length === 0) throw 'Error: friendUsername cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_friendUsername = username.trim();
+    const new_friendUsername = friendUsername.trim().toLowerCase();
 
     //check if username is within database
     const foundFriendUser = await userCollection.findOne({ username: new_friendUsername });

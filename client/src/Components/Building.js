@@ -14,7 +14,7 @@ function Building(props) {
     useEffect(() => {
         async function fetchData() {
             try {
-                const { data } = await axios.get(`http://localhost:4000/building/${props.id}`);
+                const { data } = await axios.get(`http://localhost:4000/private/buildings/${props.id}`);
                 setBuildingData(data);
             } catch (e) {
                 setErr(true);

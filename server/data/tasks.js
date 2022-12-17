@@ -4,7 +4,7 @@ const { ObjectId } = require("mongodb");
 const moment = require('moment');
 
 async function createTask(buildingId, name, dateDue, notes) {
-    if (arguments.length !== 7) throw 'You must provide 7 arguments for your task (buildingId,name,datePosted,dateDue,notes,isOverdue,isCompleted)';
+    if (arguments.length !== 4) throw 'You must provide 4 arguments for your task (buildingId,name,datePosted,dateDue,notes)';
     if (!buildingId) throw 'You must provide a buildingId for your task';
     if (!name) throw 'You must provide a name for your task';
     if (!dateDue) throw 'You must provide a dateDue for your task';
@@ -42,11 +42,10 @@ async function createTask(buildingId, name, dateDue, notes) {
         isCompleted: false
     };
 
-    building.tasks.push(newTask);
-    const insertInfo = await buildingCollection.updateOne({ _id: ObjectId(buildingId) }, { $set: { tasks: building.tasks } });
+    const insertInfo = await buildingCollection.updateOne({ _id: ObjectId(buildingId) }, { $push: { Tasks: newTask } });
     if (insertInfo.modifiedCount === 0) throw 'Could not add task';
 
-    return await this.getTask(buildingId, newTask._id);
+    return await this.getTask(buildingId, newTask._id.toString());
 }
 
 async function getTask(buildingId, taskId) {
@@ -66,7 +65,7 @@ async function getTask(buildingId, taskId) {
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
     if (building === null) throw 'No building with that id';
 
-    const task = building.tasks.find((task) => task._id.toString() === taskId);
+    const task = building.Tasks.find((task) => task._id.toString() === taskId);
     if (task === null) throw 'No task with that id';
 
     return task;
@@ -83,7 +82,7 @@ async function getAllTasks(buildingId) {
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
     if (building === null) throw 'No building with that id';
 
-    return building.tasks;
+    return building.Tasks;
 }
 
 async function updateTask(buildingId, taskId, updatedTask) {
@@ -106,7 +105,7 @@ async function updateTask(buildingId, taskId, updatedTask) {
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
     if (building === null) throw 'No building with that id';
 
-    const task = building.tasks.find((task) => task._id.toString() === taskId);
+    const task = building.Tasks.find((task) => task._id.toString() === taskId);
     if (task === null) throw 'No task with that id';
 
     const updatedTaskData = {};
@@ -181,10 +180,10 @@ async function removeTask(buildingId, taskId) {
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
     if (building === null) throw 'No building with that id';
 
-    const task = building.tasks.find((task) => task._id.toString() === taskId);
+    const task = building.Tasks.find((task) => task._id.toString() === taskId);
     if (task === null) throw 'No task with that id';
 
-    const deletionInfo = await buildingCollection.updateOne({ _id: ObjectId(buildingId) }, { $pull: { tasks: { _id: ObjectId(taskId) } } });
+    const deletionInfo = await buildingCollection.updateOne({ _id: ObjectId(buildingId) }, { $pull: { Tasks: { _id: ObjectId(taskId) } } });
     if (deletionInfo.deletedCount === 0) throw `Could not delete task with id of ${taskId}`;
 
     return true;

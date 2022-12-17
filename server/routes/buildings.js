@@ -9,18 +9,20 @@ const { ObjectId } = require("mongodb");
 router.get('/', async (req, res) => {
     try {
         const buildings = await buildingData.getAllBuildings();
-        res.json(buildings);
+        return res.json(buildings);
     } catch (e) {
-        res.status(500).json({ error: e });
+        return res.status(500).json({ error: e });
     }
 });
 
 router.get('/:id', async (req, res) => {
+    if (!req.params.id) return res.status(400).json({ error: 'Must supply building id' });
+
     try {
-        const building = await buildingData.getBuildingById(req.params.id);
-        res.json(building);
+        const building = await buildingData.getBuilding(req.params.id);
+        return res.json(building);
     } catch (e) {
-        res.status(404).json({ error: 'Building not found' });
+        return res.status(404).json({ error: 'Building not found' });
     }
 });
 
