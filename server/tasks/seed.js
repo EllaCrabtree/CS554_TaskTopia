@@ -38,7 +38,7 @@ async function main() {
 
         // Create Task
         const t1 = await taskData.createTask(bu1._id, "Finish 554 Project", "2022-12-20", ["Check Tota11y validation", "Check HTML validation"]);
-        const t2 = await taskData.createTask(bu1._id, "Take final", "2022-12-19", ["study for it :("]);
+        const t2 = await taskData.createTask(bu1._id, "Take final", "2022-12-16", ["study for it :("]);
         const t3 = await taskData.createTask(bu2._id, "Sign Lease", "2022-12-28", ["check and pay fees"]);
         const t4 = await taskData.createTask(bu3._id, "Workout", "2022-12-31", ["run 1 mile", "actually run 3 miles"]);
     }

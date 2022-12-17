@@ -16,7 +16,7 @@ function AddBuilding() {
 
     async function CreateBuilding() {
         try {
-            const { data } = await axios.post(`http://localhost:4000/building/`, formData);
+            const { data } = await axios.post(`http://localhost:4000/private/buildings/`, formData);
             setCreated(data);
         } catch (e) {
             setErr(true);
@@ -65,12 +65,15 @@ function AddBuilding() {
                         </label>
                         <label>
                             Level:
-                            <input
+                            <select
                                 onChange={(e) => handleChange(e)}
                                 id='level'
                                 name='level'
-                                placeholder='Level...'
-                            />
+                            >
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
                         </label>
                     </div>
                     <button onClick={CreateBuilding}>Create Building</button>

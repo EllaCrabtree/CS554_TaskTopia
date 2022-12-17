@@ -30,7 +30,7 @@ async function createTask(buildingId, name, dateDue, notes) {
     if (building === null) throw 'No building with that id';
 
     let datePosted = moment().format('YYYY-MM-DD').toString()
-    let dueDateMoment = moment(dateDue, 'YYYY-MM-DD').toString();
+    let dueDateMoment = moment(dateDue).format('YYYY-MM-DD').toString();
 
     const newTask = {
         _id: new ObjectId(),
@@ -45,7 +45,7 @@ async function createTask(buildingId, name, dateDue, notes) {
     const insertInfo = await buildingCollection.updateOne({ _id: ObjectId(buildingId) }, { $push: { Tasks: newTask } });
     if (insertInfo.modifiedCount === 0) throw 'Could not add task';
 
-    return await this.getTask(buildingId, newTask._id.toString());
+    return await getTask(buildingId, newTask._id.toString());
 }
 
 async function getTask(buildingId, taskId) {
@@ -61,14 +61,7 @@ async function getTask(buildingId, taskId) {
     if (taskId.length === 0) throw 'taskId must not be empty';
     if (!ObjectId.isValid(taskId)) throw 'taskId must be a valid ObjectId';
 
-    const buildingCollection = await buildings();
-    const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
-    if (building === null) throw 'No building with that id';
-
-    const task = building.Tasks.find((task) => task._id.toString() === taskId);
-    if (task === null) throw 'No task with that id';
-
-    return task;
+    return await checkIfTaskOverdue(buildingId, taskId);
 }
 
 async function getAllTasks(buildingId) {
@@ -123,7 +116,7 @@ async function updateTask(buildingId, taskId, updatedTask) {
         updatedTask.datePosted = updatedTask.datePosted.trim();
         if (updatedTask.datePosted.length === 0) throw 'datePosted must not be empty';
 
-        updatedTaskData.datePosted = moment(updatedTask.datePosted, 'YYYY-MM-DD').toString();
+        updatedTaskData.datePosted = moment(updatedTask.datePosted).format('YYYY-MM-DD').toString();
     }
 
     if (updatedTask.dateDue) {
@@ -131,7 +124,7 @@ async function updateTask(buildingId, taskId, updatedTask) {
         updatedTask.dateDue = updatedTask.dateDue.trim();
         if (updatedTask.dateDue.length === 0) throw 'dateDue must not be empty';
 
-        updatedTaskData.dateDue = moment(updatedTask.dateDue, 'YYYY-MM-DD').toString();
+        updatedTaskData.dateDue = moment(updatedTask.dateDue).format('YYYY-MM-DD').toString();
     }
 
     if (updatedTask.notes) {
@@ -140,27 +133,29 @@ async function updateTask(buildingId, taskId, updatedTask) {
         updatedTaskData.notes = updatedTask.notes;
     }
 
-    if (updatedTask.isOverdue) {
-        if (typeof updatedTask !== 'boolean') throw 'isOverdue must be a boolean';
+    if (updatedTask.isOverdue != undefined) {
+        if (typeof updatedTask.isOverdue !== 'boolean') throw 'isOverdue must be a boolean';
 
         updatedTaskData.isOverdue = updatedTask.isOverdue;
     }
 
-    if (updatedTask.isCompleted) {
-        if (typeof updatedTask !== 'boolean') throw 'isCompleted must be a boolean';
+    if (updatedTask.isCompleted != undefined) {
+        if (typeof updatedTask.isCompleted !== 'boolean') throw 'isCompleted must be a boolean';
 
         updatedTaskData.isCompleted = updatedTask.isCompleted;
     }
 
-    let updateCommand = {
-        $set: updatedTaskData
-    };
-    const query = {
-        _id: ObjectId(id)
-    };
-    await buildingCollection.updateOne
-        (query, updateCommand);
-    return await this.getTask(buildingId, taskId);
+    const updateQuery = {
+        'Tasks.$.name': updatedTaskData.name,
+        'Tasks.$.datePosted': updatedTaskData.datePosted,
+        'Tasks.$.dateDue': updatedTaskData.dateDue,
+        'Tasks.$.notes': updatedTaskData.notes,
+        'Tasks.$.isOverdue': updatedTaskData.isOverdue,
+        'Tasks.$.isCompleted': updatedTaskData.isCompleted
+    }
+
+    await buildingCollection.updateOne({ '_id': ObjectId(buildingId), 'Tasks._id': ObjectId(taskId) }, { $set: updateQuery });
+    return await getTask(buildingId, taskId);
 }
 
 async function removeTask(buildingId, taskId) {
@@ -189,12 +184,78 @@ async function removeTask(buildingId, taskId) {
     return true;
 }
 
+async function checkIfTaskOverdue(buildingId, taskId) {
+    if (!buildingId) throw 'You must provide a buildingId to search for';
+    if (typeof buildingId !== 'string') throw 'buildingId must be a string';
+    buildingId = buildingId.trim();
+    if (buildingId.length === 0) throw 'buildingId must not be empty';
+    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+
+    if (!taskId) throw 'You must provide a taskId to search for';
+    if (typeof taskId !== 'string') throw 'taskId must be a string';
+    taskId = taskId.trim();
+    if (taskId.length === 0) throw 'taskId must not be empty';
+    if (!ObjectId.isValid(taskId)) throw 'taskId must be a valid ObjectId';
+
+    const buildingCollection = await buildings();
+    const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
+    if (building === null) throw 'No building with that id';
+
+    const task = building.Tasks.find((task) => task._id.toString() === taskId);
+    if (task === null) throw 'No task with that id';
+
+    const currDate = moment().format("YYYY-MM-DD");
+    const dueDate = moment(task.dateDue).format("YYYY-MM-DD");
+
+    if (currDate > dueDate && task.isOverdue == false) {
+        task.isOverdue = true;
+        const updatedTask = await updateTask(buildingId, taskId, task);
+        updatedTask._id = updatedTask._id.toString();
+        return updatedTask;
+    }
+    else {
+        task._id = task._id.toString();
+        return task;
+    }
+}
+
+async function addNotestoTask(buildingId, taskId, note) {
+    if (!buildingId) throw 'You must provide a buildingId to search for';
+    if (typeof buildingId !== 'string') throw 'buildingId must be a string';
+    buildingId = buildingId.trim();
+    if (buildingId.length === 0) throw 'buildingId must not be empty';
+    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+
+    if (!taskId) throw 'You must provide a taskId to search for';
+    if (typeof taskId !== 'string') throw 'taskId must be a string';
+    taskId = taskId.trim();
+    if (taskId.length === 0) throw 'taskId must not be empty';
+    if (!ObjectId.isValid(taskId)) throw 'taskId must be a valid ObjectId';
+
+    if (!note) throw 'Notes must be provided';
+    if (typeof note !== 'string') throw 'note must be a string';
+    note = note.trim();
+    if (note.length === 0) throw 'note must not be empty';
+
+    const buildingCollection = await buildings();
+    const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
+    if (building === null) throw 'No building with that id';
+
+    const task = building.Tasks.find((task) => task._id.toString() === taskId);
+    if (task === null) throw 'No task with that id';
+
+    task.notes.push(note);
+    return await updateTask(buildingId, taskId, task);
+}
+
 module.exports = {
     createTask,
     getTask,
     getAllTasks,
     updateTask,
-    removeTask
+    removeTask,
+    checkIfTaskOverdue,
+    addNotestoTask
 };
 
 

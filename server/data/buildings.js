@@ -28,7 +28,7 @@ async function createBuilding(buildingCode, xp, xpMax, level) {
 
     //Check Level
     if (typeof level !== 'number') throw 'level must be a number';
-    if (level < 0) throw 'level must be a positive number';
+    if (level < 0 || level > 3) throw 'level must be either 1, 2, or 3';
 
     const buildingCollection = await buildings();
     const newBuilding = {
