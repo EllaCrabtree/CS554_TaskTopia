@@ -1,5 +1,12 @@
 version: '3'
 services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - tasktopia
   mongo:
     container_name: mongo
     image: mongo:latest
@@ -14,9 +21,12 @@ services:
     depends_on:
       - serviceName: mongo
         condition: service_healthy
+      - serviceName: redis
+        condition: service_healthy
     build: ./server
     environment:
       - DB_HOST=mongo
+      - REDIS_HOST=redis
     ports:
       - "4000:4000"
     volumes:

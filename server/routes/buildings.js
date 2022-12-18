@@ -70,6 +70,11 @@ router.put('/:id', async (req, res) => {
         return;
     }
 
+    if (!building.id && !ObjectId.isValid(!building.id)) {
+        res.status(400).json({ error: 'You must provide a valid id' });
+        return;
+    }
+
     if (!building.buildingCode) {
         res.status(400).json({ error: 'You must provide a code for the building' });
         return;
@@ -101,7 +106,7 @@ router.put('/:id', async (req, res) => {
     }
 
     try {
-        const updatedBuilding = await buildingData.updateBuilding(req.params.id, buildingData);
+        const updatedBuilding = await buildingData.updateBuilding(building.id, building.buildingCode, building.xp, building.xpMax, building.level, building.Avatar, building.Tasks);
         res.status(200).json({ message: "Building updated" });
     } catch {
         res.status(404).json({ error: "Building not found" });
