@@ -5,6 +5,8 @@ const badges = mongoCollections.badges;
 const users = mongoCollections.users;
 const buildings = mongoCollections.buildings;
 
+const userData = require('./users');
+
 /**
  * Adds badge to the database
  * 
@@ -176,22 +178,74 @@ async function getUsersBadges(userName) {
     if (arguments.length != 1) throw `Incorrect number of arguments passed to 'getUsersBadges'`;
     if (!userName) throw `Id cannot be empty.`;
     if (typeof userName != 'string') throw `Id must be a string.`;
-    userName = String.prototype.trim.call(userName);
+    userName = String.prototype.trim.call(userName).toLowerCase();
 
     const allBadges = await getAllBadges();
 
     let usersBadges = [];
 
     for (let i = 0; i < allBadges.length; i++) {
-        let val = checkIfUserGetsBadge(userName, allBadges[i]);
+        let val = await checkIfUserGetsBadge(userName, allBadges[i]._id.toString());
         if (val) {
-            usersBadges.push(val);
+            usersBadges.push(allBadges[i]);
         }
     }
 
     return usersBadges;
 }
 
+async function giveUserAllBadges(userName) {
+    if (arguments.length != 1) throw `Incorrect number of arguments passed to 'getUsersBadges'`;
+    if (!userName) throw `Id cannot be empty.`;
+    if (typeof userName != 'string') throw `Id must be a string.`;
+    userName = String.prototype.trim.call(userName).toLowerCase();
+
+    const badgeArray = await getUsersBadges(userName);
+
+    for (let i = 0; i < badgeArray.length; i++) {
+        try {
+            const val = await addAwardToUser(userName, badgeArray[i]._id.toString());
+        }
+        catch (e) {
+            throw e
+        }
+    }
+    return { 'message': "all badges added" }
+}
+
+
+/**
+ * Adds badge to a user's awards
+ * 
+ * @param {String} username 
+ * @param {ObjectId} awardID 
+ * @returns the user with updated awards
+ */
+async function addAwardToUser(username, awardID) {
+    if (arguments.length != 2) throw 'Error: Invalid number of arguments!'
+    if (!username) throw 'Error: Username not supplied!'
+    if (typeof username !== 'string') throw 'Error: Username must be a string!'
+    if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
+    const new_username = username.trim().toLowerCase();;
+
+    const userCollection = await users();
+    const foundUser = await userCollection.findOne({ username: new_username });
+    if (!foundUser) throw 'Error: User not found!'
+
+    if (!awardID) throw 'Error: Award not supplied!'
+    const newId = awardID.trim();
+
+    if (!ObjectId.isValid(newId)) {
+        throw 'Error: Award ID is not a valid ObjectID!'
+    }
+
+    const updatedInfo = await userCollection.updateOne({ username: new_username }, { $push: { awards: ObjectId(newId) } });
+    if (updatedInfo.modifiedCount === 0) {
+        throw 'Could Not Update Awards Successfully';
+    }
+
+    return { 'message': 'success' };
+}
 
 /**
  * 
@@ -203,7 +257,7 @@ async function checkIfUserGetsBadge(userName, badgeId) {
     if (arguments.length != 2) throw `Incorrect number of arguments passed to 'checkIfUserGetsBadge'`;
     if (!userName) throw `Id cannot be empty.`;
     if (typeof userName != 'string') throw `Id must be a string.`;
-    userName = String.prototype.trim.call(userName);
+    userName = String.prototype.trim.call(userName).toLowerCase();
 
     if (!badgeId) throw `Id cannot be empty.`;
     if (typeof badgeId != 'string') throw `Id must be a string.`;
@@ -222,11 +276,11 @@ async function checkIfUserGetsBadge(userName, badgeId) {
     for (let i = 0; i < foundUser.buildings.length; i++) {
         let building = await buildingCollection.findOne({ _id: ObjectId(foundUser.buildings[i]) });
         if (!building) throw 'Error: Building not found!';
-        if (building.type === foundBadge.building && building.xp >= foundBadge.ptsNeeded) {
-            return foundBadge;
+        if (building.buildingCode === foundBadge.building && building.xp >= foundBadge.ptsNeeded) {
+            return true;
         }
     }
-    return undefined;
+    return false;
 }
 
 /**
@@ -271,4 +325,4 @@ async function populateBadges(building, levels) {
     }
 }
 
-module.exports = { createBadge, getBadge, removeBadge, updateBadge, getUsersBadges, populateBadges, getAllBadges, checkIfUserGetsBadge }
+module.exports = { createBadge, getBadge, removeBadge, updateBadge, getUsersBadges, populateBadges, getAllBadges, checkIfUserGetsBadge, giveUserAllBadges }

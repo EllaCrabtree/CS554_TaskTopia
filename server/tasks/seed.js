@@ -24,9 +24,9 @@ async function main() {
         const bu2 = await buildingsData.createBuilding(buildingCodes.BuildingCodes.ADMIN, 2, 30, 1);
         const bu3 = await buildingsData.createBuilding(buildingCodes.BuildingCodes.PARK, 8, 10, 3);
 
-        await usersData.addBuildingToUser('Odline', bu1._id);
-        await usersData.addBuildingToUser('Odline', bu2._id);
-        await usersData.addBuildingToUser('BellaTheBaddie', bu3._id);
+        await usersData.addBuildingToUser(user1.username, bu1._id);
+        await usersData.addBuildingToUser(user1.username, bu2._id);
+        await usersData.addBuildingToUser(user2.username, bu3._id);
 
         // Populate all possible badges
         const b1 = await badgeData.populateBadges(buildingCodes.BuildingCodes.ADMIN, [20, 25, 35]);
@@ -41,6 +41,9 @@ async function main() {
         const t2 = await taskData.createTask(bu1._id, "Take final", "2022-12-16", ["study for it :("]);
         const t3 = await taskData.createTask(bu2._id, "Sign Lease", "2022-12-28", ["check and pay fees"]);
         const t4 = await taskData.createTask(bu3._id, "Workout", "2022-12-31", ["run 1 mile", "actually run 3 miles"]);
+
+        await usersData.getUserByUsername(user1.username);
+        await usersData.getUserByUsername(user2.username);
     }
     catch (error) {
         console.log(error);
