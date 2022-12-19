@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const app = express();
 const static = express.static(__dirname + '/public');
 const configRoutes = require('./routes');
@@ -20,6 +21,11 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+
+app.use(multer({
+    limits: { fieldSize: 25 * 1024 * 1024}
+}).array());
 
 app.use('/private', (req, res, next) => {
     if (!req.session.user) {
