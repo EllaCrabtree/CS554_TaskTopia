@@ -5,24 +5,24 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    volumes:
+      - redis:/data
     networks:
       - tasktopia
   mongo:
     container_name: mongo
     image: mongo:latest
-    volumes:
-      - ./data:/data/db
     ports:
       - "27017:27017"
+    volumes:
+      - mongo:/data/db
     networks:
       - tasktopia
   server:
     container_name: server
     depends_on:
-      - serviceName: mongo
-        condition: service_healthy
-      - serviceName: redis
-        condition: service_healthy
+      - mongo
+      - redis
     build: ./server
     environment:
       - DB_HOST=mongo
@@ -31,6 +31,7 @@ services:
       - "4000:4000"
     volumes:
       - ./server:/app-server
+      - /app-server/node_modules
     command: npm start
     networks:
       - tasktopia
@@ -41,9 +42,13 @@ services:
       - "3000:3000"
     volumes:
       - ./client:/app-client
-    command: npm start
+      - /app-client/node_modules
+    command: npm run start
     networks:
       - tasktopia
 networks:
   tasktopia:
     driver: bridge
+volumes:
+  mongo:
+  redis:

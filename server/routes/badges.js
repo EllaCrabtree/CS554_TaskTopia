@@ -4,7 +4,12 @@ const axios = require('axios');
 const flat = require('flat');
 const unflatten = flat.unflatten;
 const redis = require('redis');
-const client = redis.createClient();
+const client = redis.createClient({
+    legacyMode: true,
+    socket: {
+        host: 'redis',
+        port: 6379
+    }});
 const badgeData = require('../data/badges');
 client.connect().then(() => { });
 
