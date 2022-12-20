@@ -19,7 +19,7 @@ async function testUsers() {
     }
 
     try {
-        user1 = await users.createUser('Odin', 'Crabtree', 'Odline', 'the_baby_lulu', 'urmom@gmail.com')
+        user1 = await users.createUser('Odin', 'Crabtree', 'Odline', 'the_baby_lulu#1', 'urmom@gmail.com')
         console.log('Test 2 Success!')
     } catch (e) {
         console.log(`Test 2 Failed! ${e}`)

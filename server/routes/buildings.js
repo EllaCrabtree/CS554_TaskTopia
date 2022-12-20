@@ -33,15 +33,20 @@ router.post('/', async (req, res) => {
         return;
     }
 
+    if (!building.name) {
+        res.status(400).json({error: "You must provide a name for the building!"});
+        return;
+    }
+
     if (!building.buildingCode) {
         res.status(400).json({ error: 'You must provide a code for the building' });
         return;
     }
 
-    if (!building.xp) {
-        res.status(400).json({ error: 'You must provide an xp' });
-        return;
-    }
+    // if (!building.xp) {
+    //     res.status(400).json({ error: 'You must provide an xp' });
+    //     return;
+    // }
 
     if (!building.xpMax) {
         res.status(400).json({ error: 'You must provide an xp max to the building' });
@@ -54,7 +59,7 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const newBuilding = await buildingData.createBuilding(building.buildingCode, building.xp, building.xpMax, building.level);
+        const newBuilding = await buildingData.createBuilding(building.name, building.buildingCode, 0, building.xpMax, building.level, "odline");
         res.json(newBuilding);
     } catch (e) {
         res.status(500).json({ error: e });

@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Error from './Error';

@@ -1,3 +1,6 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import Building from './Building';
 import Avatar from './Avatar';
@@ -60,7 +63,7 @@ function CreateAvatar(props) {
             setErrData(e);
             console.log(e);
         }
-    };
+    }
 
     async function GetAvatar() {
         try {
@@ -77,7 +80,7 @@ function CreateAvatar(props) {
         } catch (e) {
             console.log(e);
         }
-    };
+    }
 
     return (<div>
         {!createdAvatar && !err &&

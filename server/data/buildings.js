@@ -2,14 +2,15 @@ const mongoCollections = require('../config/mongoCollections');
 const buildings = mongoCollections.buildings;
 const users = mongoCollections.users;
 const buildingCodes = require("./buildingCodes")
-const userFunctions = require('./users')
+const data = require('../data')
+const userFunctions = data.users
 const { ObjectId } = require("mongodb");
 
-async function createBuilding(buildingCode, xp, xpMax, level, user) {
+async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
     //Check Arguments
-    if (arguments.length !== 4) throw 'You must provide 4 arguments for your building (buildingCode,xp,xpMax,level)';
+    if (arguments.length !== 6) throw 'You must provide 6 arguments for your building (name,buildingCode,xp,xpMax,level,user)';
     if (!buildingCode) throw 'You must provide a buildingCode for your building';
-    if (!xp) throw 'You must provide an xp for your building';
+    // if (!xp) throw 'You must provide an xp for your building';
     if (!xpMax) throw 'You must provide an xpMax for your building';
     if (!level) throw 'You must provide an level for your building';
 
@@ -20,15 +21,19 @@ async function createBuilding(buildingCode, xp, xpMax, level, user) {
     if (!buildingCodes.isValidBuildingCode(buildingCode)) throw 'buildingCode must be a valid buildingCode';
 
     //Check XP
-    if (typeof xp !== 'number') throw 'xp must be a number';
+    if (typeof xp !== 'number' && typeof xp !== 'string') throw 'xp must be a number or string';
     if (xp < 0) throw 'xp must be a positive number';
 
     //Check XP Max
-    if (typeof xpMax !== 'number') throw 'xpMax must be a number';
+    if (typeof xpMax !== 'number' && typeof xpMax !== 'string') throw 'xpMax must be a number';
+    if (typeof xpMax === 'string' && isNaN(Number(xpMax))) throw 'xpMax must be a number (given as a string)'
+    xpMax = Number(xpMax);
     if (xpMax < 0) throw 'xpMax must be a positive number';
 
     //Check Level
-    if (typeof level !== 'number') throw 'level must be a number';
+    if (typeof level !== 'number' && typeof level !== 'string') throw 'level must be a number';
+    if (typeof level === 'string' && isNaN(Number(level))) throw 'level must be a number (given as a string)'
+    level = Number(level);
     if (level < 0 || level > 3) throw 'level must be either 1, 2, or 3';
 
     //Check User
@@ -36,6 +41,7 @@ async function createBuilding(buildingCode, xp, xpMax, level, user) {
 
     const buildingCollection = await buildings();
     const newBuilding = {
+        name: name,
         buildingCode: buildingCode,
         xp: xp,
         xpMax: xpMax,
@@ -48,9 +54,29 @@ async function createBuilding(buildingCode, xp, xpMax, level, user) {
     if (newInsertInformation.insertedCount === 0) throw 'Could not add building';
     const newId = newInsertInformation.insertedId;
 
-    await userFunctions.addBuildingToUser(user, {buildingID: newId, type: buildingCode});
+    const userCollection = await users(); //Initializing User Collection Variable
+
+    //check if username is within database
+    const foundUser = await userCollection.findOne({ username: user });
+
+    if (!foundUser) {
+        throw 'Error: User not found!'
+    }
+
+    const userEntry = {buildingID: newId, name: name, code: buildingCode};
+
+    const update = await userCollection.updateOne(
+        { _id: ObjectId(foundUser._id) },
+        { $addToSet: { buildings: userEntry } }
+    )
+
+    if (!update.matchedCount && !update.modifiedCount) {
+        throw 'AddBuildings: Update failed';
+    }
+
 
     const building = await this.getBuilding(newId.toString());
+    console.log('i made it')
     return building;
 }
 
@@ -166,11 +192,10 @@ async function getUserBuildings(username) {
     const foundUser = await userCollection.findOne({ username: new_username });
 
     if (!foundUser) throw 'Error: User not found!';
-
-
-    foundUser.buildings.forEach(element => {
-        element = element.toString();
-    })
+    
+    // foundUser.buildings.forEach(element => {
+    //     element = element.toString();
+    // })
     return foundUser.buildings
 }
 

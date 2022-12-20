@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { useState } from 'react';
 import Building from './Building';
 import axios from 'axios';
@@ -5,7 +6,7 @@ import Error from './Error';
 
 
 function AddBuilding() {
-    const [formData, setFormData] = useState({ buildingType: '' });
+    const [formData, setFormData] = useState(null);
     const [createdBuilding, setCreated] = useState(undefined);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
@@ -16,6 +17,8 @@ function AddBuilding() {
 
     async function CreateBuilding() {
         try {
+            // console.log(formData);
+            console.log('im not supposed to be here')
             const { data } = await axios.post(`http://localhost:4000/private/buildings/`, formData);
             setCreated(data);
         } catch (e) {
@@ -23,19 +26,30 @@ function AddBuilding() {
             setErrData(e);
             console.log(e);
         }
-    };
+    }
 
     return (<div>
         {!createdBuilding && !err &&
             <div>
                 <div className='add'>
                     <div className='input-selection'>
+
+                        <label>
+                            Building Name:
+                            <input
+                                onChange={(e) => handleChange(e)}
+                                id='name'
+                                name='name'
+                                placeholder='Building Name...'>
+                            </input>
+                        </label>
+
                         <label>
                             Building Type:
                             <select
                                 onChange={(e) => handleChange(e)}
-                                id='buildingType'
-                                name='buildingType'
+                                id='buildingCode'
+                                name='buildingCode'
                             >
                                 <option value="ADMIN">ADMIN</option>
                                 <option value="EDUCATION">EDUCATION</option>
@@ -45,7 +59,7 @@ function AddBuilding() {
                                 <option value="STORE">STORE</option>
                             </select>
                         </label>
-                        <label>
+                        {/* <label>
                             XP:
                             <input
                                 onChange={(e) => handleChange(e)}
@@ -53,13 +67,14 @@ function AddBuilding() {
                                 name='xp'
                                 placeholder='XP...'
                             />
-                        </label>
+                        </label> */}
                         <label>
                             Max XP:
                             <input
                                 onChange={(e) => handleChange(e)}
                                 id='xpMax'
                                 name='xpMax'
+                                type='number'
                                 placeholder='Max XP...'
                             />
                         </label>

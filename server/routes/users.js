@@ -8,6 +8,7 @@ const buildingData = data.buildings;
 router.get('/buildings', async (req, res) => {
     try {
         const val = await buildingData.getUserBuildings("odline");
+        console.log(val);
         return res.status(200).json(val);
     }
     catch (e) {

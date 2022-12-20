@@ -32,32 +32,32 @@ app.use(session({
 }));
 
 
-var storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'uploads/')
-    },
-    filename: function(req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
-})
+// var storage = multer.diskStorage({
+//     destination: function(req, file, cb) {
+//         cb(null, 'uploads/')
+//     },
+//     filename: function(req, file, cb) {
+//         cb(null, Date.now() + path.extname(file.originalname))
+//     }
+// })
 
-var upload = multer({storage: storage}).single('img')
+// var upload = multer({storage: storage}).single('img')
 
 app.use(multer({
     limits: { fieldSize: 25 * 1024 * 1024}
 }).array());
 
-app.use('/private', (req, res, next) => {
-    if (!req.session.user) {
-        return res.status(403).json({
-            title: "Login",
-            name: "Login",
-            error: "You are not logged in"
-        });
-    } else {
-        next();
-    }
-});
+// app.use('/private', (req, res, next) => {
+//     if (!req.session.user) {
+//         return res.status(403).json({
+//             title: "Login",
+//             name: "Login",
+//             error: "You are not logged in"
+//         });
+//     } else {
+//         next();
+//     }
+// });
 
 //Check if badge exists in cache
 app.use('/badge/:id', async (req, res, next) => {

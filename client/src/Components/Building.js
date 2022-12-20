@@ -1,9 +1,13 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddTask from './AddTask'
 import Task from './Task';
 import Error from './Error';
 import Avatar from './Avatar';
+import { useParams } from 'react-router-dom';
 
 function Building(props) {
     const [buildingData, setBuildingData] = useState(null);
@@ -11,10 +15,13 @@ function Building(props) {
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
 
+    let { buildingId } = useParams();
+
     useEffect(() => {
         async function fetchData() {
             try {
-                const { data } = await axios.get(`http://localhost:4000/private/buildings/${props.id}`);
+                console.log(props.id)
+                const { data } = await axios.get(`http://localhost:4000/private/buildings/${buildingId}`);
                 setBuildingData(data);
             } catch (e) {
                 setErr(true);
@@ -28,7 +35,7 @@ function Building(props) {
     return (<div>
         {buildingData &&
             <div className='buildingContainer'>
-                {buildingData.buildingCode && buildingData.level && <img alt={`${buildingData.buildingCode} Building`} src={require(`../icons/Buildings/${buildingData.buildingCode}/${buildingData.level}.png`)} />}
+                {/* {buildingData.buildingCode && buildingData.level && <img alt={`${buildingData.buildingCode} Building`} src={require(`../icons/Buildings/${buildingData.buildingCode}/${buildingData.level}.png`)} />} */}
                 {buildingData.buildingCode && <h1>{buildingData.buildingCode}</h1>}
                 {buildingData.xp && <h2>Current XP:{buildingData.xp}</h2>}
                 {buildingData.xpMax && <h2>Max XP:{buildingData.xpMax}</h2>}

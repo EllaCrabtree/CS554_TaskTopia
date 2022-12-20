@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 import { useState } from 'react';
 import axios from 'axios';
 import Error from './Error';
@@ -21,7 +23,7 @@ function AddNote(props) {
             setErrData(e);
             console.log(e);
         }
-    };
+    }
 
     return (<div> {!createdNote && !err &&
         <div>

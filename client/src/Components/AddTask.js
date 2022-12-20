@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/react-in-jsx-scope */
 import { useState } from 'react';
 import Task from './Task';
 import axios from 'axios';
@@ -22,8 +24,8 @@ function AddTask(props) {
             setErrData(e);
             console.log(e);
         }
-    };
-
+    }
+    
     return (<div> {!createdTask && !err &&
         <div>
             <div className='add'>
