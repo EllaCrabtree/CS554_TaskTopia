@@ -1,9 +1,10 @@
-import { useState } from 'react';
+/* eslint-disable react/prop-types */
+import React,{ useState } from 'react';
 import axios from 'axios';
 import Error from './Error';
 
 function AddNote(props) {
-    const [formData, setFormData] = useState({ buildingId: props.id });
+    const [formData, setFormData] = useState({ buildingId: props.buildingId , taskId: props.taskId});
     const [createdNote, setCreated] = useState(undefined);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
@@ -21,7 +22,7 @@ function AddNote(props) {
             setErrData(e);
             console.log(e);
         }
-    };
+    }
 
     return (<div> {!createdNote && !err &&
         <div>

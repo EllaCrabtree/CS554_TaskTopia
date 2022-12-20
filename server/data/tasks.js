@@ -3,12 +3,11 @@ const buildings = mongoCollections.buildings;
 const { ObjectId } = require("mongodb");
 const moment = require('moment');
 
-async function createTask(buildingId, name, dateDue, notes) {
-    if (arguments.length !== 4) throw 'You must provide 4 arguments for your task (buildingId,name,datePosted,dateDue,notes)';
+async function createTask(buildingId, name, dateDue) {
+    if (arguments.length !== 3) throw 'You must provide 4 arguments for your task (buildingId,name,datePosted,dateDue)';
     if (!buildingId) throw 'You must provide a buildingId for your task';
     if (!name) throw 'You must provide a name for your task';
     if (!dateDue) throw 'You must provide a dateDue for your task';
-    if (!notes) throw 'You must provide a notes for your task';
 
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
@@ -23,8 +22,6 @@ async function createTask(buildingId, name, dateDue, notes) {
     dateDue = dateDue.trim();
     if (dateDue.length === 0) throw 'dateDue must not be empty';
 
-    if (!Array.isArray(notes)) throw 'notes must be an array';
-
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
     if (building === null) throw 'No building with that id';
@@ -37,7 +34,7 @@ async function createTask(buildingId, name, dateDue, notes) {
         name: name,
         datePosted: datePosted,
         dateDue: dueDateMoment,
-        notes: notes,
+        notes: [],
         isOverdue: false,
         isCompleted: false
     };

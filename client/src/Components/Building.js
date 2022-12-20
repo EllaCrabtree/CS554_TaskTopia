@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddTask from './AddTask'
 import Task from './Task';
@@ -33,13 +34,13 @@ function Building(props) {
                 {buildingData.xp && <h2>Current XP:{buildingData.xp}</h2>}
                 {buildingData.xpMax && <h2>Max XP:{buildingData.xpMax}</h2>}
                 {buildingData.level && <h2>Level:{buildingData.level}</h2>}
-                {buildingData.avatars && buildingData.avatars.map(element => {
+                {buildingData.Avatars && buildingData.Avatars.map(element => {
                     return (
-                        <Avatar id={element._id} />)
+                        <Avatar id={element._id} key={element._id} />)
                 })}
-                {buildingData.tasks && buildingData.tasks.map(element => {
+                {buildingData.Tasks && buildingData.Tasks.map(element => {
                     return (
-                        <Task buildingId={props.id} taskId={element._id} />)
+                        <Task buildingId={props.id} taskId={element._id} key={element._id} />)
                 })}
                 {!addBtnToggle ? <button onClick={() => setBtnToggle(!addBtnToggle)} >Add New Tasks</button> : <button onClick={() => setBtnToggle(!addBtnToggle)} > Stop Adding New Tasks</button>}
                 <br />

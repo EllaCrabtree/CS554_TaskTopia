@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React,{ useState, useEffect } from 'react';
 import axios from 'axios';
 import Building from './Building';
 import Error from './Error';
@@ -25,7 +25,7 @@ function UsersBuildings() {
     return (<div>
         {buildingData &&
             buildingData.map(element => {
-                return <Building id={element} />
+                return <Building id={element} key={element}/>
             })
         }
         {err && <Error error={errData} />}
