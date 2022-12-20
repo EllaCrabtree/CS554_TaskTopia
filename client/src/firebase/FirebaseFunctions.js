@@ -23,16 +23,6 @@ async function doCreateUserWithEmailandPassword(email, password){
     }
 }
 
-async function getCurrentUser(){
-     const user = authFirebase.currentUser;
-
-    if(user){
-        return user;
-    }else{
-        return {"errorCode": 404, "errorMessage": "A user is not currently signed in"}
-    }
-}
-
 async function doChangePassword(email, newPassword){
     const user = authFirebase.currentUser;
     let success = null;
@@ -56,8 +46,9 @@ async function doChangePassword(email, newPassword){
     return {"success": success, "errorMessage": errorMessage};
 }
 
-async function doSignInWithEmailandPassword(email, password){
+async function doSignInWithEmailAndPassword(email, password){
     let user = null, errorCode = null, errorMessage = null;
+
     await firebase.signInWithEmailAndPassword(authFirebase, email, password)
         .then((userCredential) => {
             user = userCredential.user;
@@ -66,6 +57,7 @@ async function doSignInWithEmailandPassword(email, password){
             errorCode = error.code;
             errorMessage = error.message;
         });
+
     if(user){
         return user;
     }
@@ -135,9 +127,8 @@ async function doSignOut(){
 
 export {
     doCreateUserWithEmailandPassword,
-    getCurrentUser,
     doChangePassword,
-    doSignInWithEmailandPassword,
+    doSignInWithEmailAndPassword,
     doGoogleSignIn,
     doPasswordReset,
     deleteUser,
