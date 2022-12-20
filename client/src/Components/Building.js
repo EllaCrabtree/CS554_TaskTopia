@@ -14,7 +14,7 @@ function Building(props) {
     useEffect(() => {
         async function fetchData() {
             try {
-                const { data } = await axios.get(`http://localhost:4000/building/${props.id}`);
+                const { data } = await axios.get(`http://localhost:4000/private/buildings/${props.id}`);
                 setBuildingData(data);
             } catch (e) {
                 setErr(true);
@@ -28,6 +28,7 @@ function Building(props) {
     return (<div>
         {buildingData &&
             <div className='buildingContainer'>
+                {buildingData.buildingCode && buildingData.level && <img alt={`${buildingData.buildingCode} Building`} src={require(`../icons/Buildings/${buildingData.buildingCode}/${buildingData.level}.png`)} />}
                 {buildingData.buildingCode && <h1>{buildingData.buildingCode}</h1>}
                 {buildingData.xp && <h2>Current XP:{buildingData.xp}</h2>}
                 {buildingData.xpMax && <h2>Max XP:{buildingData.xpMax}</h2>}

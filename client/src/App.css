@@ -28,6 +28,11 @@
   color: #61dafb;
 }
 
+#avatarImage {
+  border-radius: 50%;
+  border-style: inset;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

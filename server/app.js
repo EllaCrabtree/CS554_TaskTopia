@@ -5,8 +5,17 @@ const static = express.static(__dirname + '/public');
 const configRoutes = require('./routes');
 const session = require('express-session');
 const redis = require('redis');
+
+const path = require('path');
+// const client = redis.createClient({
+//     legacyMode: true,
+//     socket: {
+//         host: 'redis',
+//         port: 6379
+//     }
+// });
 const client = redis.createClient();
-client.connect().then(() => { });
+client.connect().then(() => {});
 
 const cors = require('cors');
 app.use(cors());
@@ -22,6 +31,17 @@ app.use(session({
     saveUninitialized: true
 }));
 
+
+var storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function(req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
+var upload = multer({storage: storage}).single('img')
 
 app.use(multer({
     limits: { fieldSize: 25 * 1024 * 1024}

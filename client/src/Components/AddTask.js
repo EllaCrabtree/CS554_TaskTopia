@@ -15,7 +15,7 @@ function AddTask(props) {
 
     async function CreateTask() {
         try {
-            const { data } = await axios.post(`http://localhost:4000/task/`, formData);
+            const { data } = await axios.post(`http://localhost:4000/private/task/`, formData);
             setCreated(data);
         } catch (e) {
             setErr(true);

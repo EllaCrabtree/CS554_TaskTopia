@@ -6,6 +6,7 @@ const { ObjectId } = require("mongodb");
 const bcrypt = require('bcrypt');
 const buildingsData = require('./buildings');
 const tasksData = require('./tasks');
+const badgeData = require('./badges');
 
 
 async function createUser(firstName, lastName, username, password, email) {
@@ -153,7 +154,7 @@ async function createUser(firstName, lastName, username, password, email) {
     if (insertInfo.insertedCount === 0) throw 'Could not add user';
 
     const newId = insertInfo.insertedId;
-    newUser = await getUserById(newId.toString())
+    newUser = await getUserByUsername(new_username)
     return newUser
 }
 
@@ -178,7 +179,7 @@ async function checkUser(username, password) {
         throw 'Server Error: Username cannot be empty or only spaces!'
     }
 
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();;
 
 
     //check if username is within database
@@ -272,7 +273,7 @@ async function addBuildingToUser(username, buildingID) {
     }
 
     // Trim off spaces from username
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();;
 
     //Will not check username requirements (only in create)
 
@@ -317,7 +318,7 @@ async function addBuildingToUser(username, buildingID) {
 //This one we may want to do later once we understand how this is updated
 // ~~ I agree, we'll wait
 async function updateCompletionFrequency(username, completed) {
-
+    //make sure to - username.toLowerCase();
 }
 /**
  * Gets a user by username
@@ -325,7 +326,7 @@ async function updateCompletionFrequency(username, completed) {
  * @param {String} username 
  * @returns the user with the given username
  */
- async function getUserByUsername(username) {
+async function getUserByUsername(username) {
 
     //-----------------------------------Check Arguments-----------------------------------
     if (arguments.length != 1) {
@@ -345,14 +346,16 @@ async function updateCompletionFrequency(username, completed) {
         throw 'Error: Username cannot be all spaces or empty!'
     }
 
-    const newUsername = username.trim();
+    const newUsername = username.trim().toLowerCase();;
 
     const userCollection = await users();
-    const user = await userCollection.findOne({username: newUsername});
+    await badgeData.giveUserAllBadges(username);
+    const user = await userCollection.findOne({ username: newUsername });
 
     if (!user) {
         throw 'Server Error: User not found for chosen Username';
     }
+
 
     user.username = user.username.toString();
     return user;
@@ -378,7 +381,7 @@ async function updateLevel(username, newLevel) {
     if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();;
 
     //check if username is within database
     const userCollection = await users();
@@ -405,61 +408,6 @@ async function updateLevel(username, newLevel) {
 }
 
 /**
- * Adds badge to a user's awards
- * 
- * @param {String} username 
- * @param {ObjectId} awardID 
- * @returns the user with updated awards
- */
-async function addAwardToUser(username, awardID) {
-
-    if (arguments.length != 2) throw 'Error: Invalid number of arguments!'
-
-    //-----------------------------------Check Username-----------------------------------
-
-    if (!username) throw 'Error: Username not supplied!'
-
-    if (typeof username !== 'string') throw 'Error: Username must be a string!'
-
-    if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
-
-    // Check username requirements - decide later
-    const new_username = username.trim();
-
-    //check if username is within database
-    const userCollection = await users();
-    const foundUser = await userCollection.findOne({ username: new_username });
-
-    if (!foundUser) throw 'Error: User not found!'
-
-    //-----------------------------------Check awardID -----------------------------------
-
-    if (!awardID) throw 'Error: Award not supplied!'
-
-    const newId = awardID.trim();
-
-    if (!ObjectId.isValid(newId)) {
-        throw 'Error: Award ID is not a valid ObjectID!'
-    }
-
-    const badgeCollection = await badges();
-    const foundBadge = await badgeCollection.findOne({ id: newId });
-
-    if (!foundUser) throw 'Error: User not found!'
-
-    //-----------------------------------Add awardID to awards ---------------------------
-
-    let new_awards = foundUser.awards.push(foundBadge);
-
-    const updatedInfo = await userCollection.updateOne({ username: username }, { $set: { awards: new_awards } });
-    if (updatedInfo.modifiedCount === 0) {
-        throw 'Could Not Update Awards Successfully';
-    }
-
-    return await this.getUserById(foundUser._id);
-}
-
-/**
  * Adds a user to a user's friends list
  * 
  * @param {String} username 
@@ -479,7 +427,7 @@ async function addFriend(username, friendUsername) {
     if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();;
 
     //check if username is within database
     const userCollection = await users();
@@ -496,7 +444,7 @@ async function addFriend(username, friendUsername) {
     if (friendUsername.trim().length === 0) throw 'Error: friendUsername cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_friendUsername = username.trim();
+    const new_friendUsername = friendUsername.trim().toLowerCase();;
 
     //check if username is within database
     const foundFriendUser = await userCollection.findOne({ username: new_friendUsername });
@@ -544,7 +492,7 @@ async function removeFriend(username, friendUsername) {
     if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_username = username.trim();
+    const new_username = username.trim().toLowerCase();
 
     //check if username is within database
     const userCollection = await users();
@@ -561,7 +509,7 @@ async function removeFriend(username, friendUsername) {
     if (friendUsername.trim().length === 0) throw 'Error: friendUsername cannot be empty or only spaces!'
 
     // Check username requirements - decide later
-    const new_friendUsername = username.trim();
+    const new_friendUsername = friendUsername.trim().toLowerCase();
 
     //check if username is within database
     const foundFriendUser = await userCollection.findOne({ username: new_friendUsername });
@@ -633,30 +581,6 @@ async function deleteUser(userId) {
     return { deleted: true };
 }
 
-async function emailUpcomingDueDates(userId) {
-    if (arguments.length != 1) throw 'Error: Invalid number of arguments!'
-    if (!userId) throw 'Error: UserID must be supplied!';
-    if (typeof userId !== 'string') throw 'Error: UserID must be a string!';
-    if (userId.trim().length === 0) throw 'Error: UserID cannot be an empty string or just spaces';
-    userId = userId.trim();
-    if (!ObjectId.isValid(userId)) throw 'Error: UserID given is an invalid object ID';
-
-    const user = await getUserById(userId);
-    let allTaskObjects = [];
-
-    for (let i = 0; i < user.buildings.length; i++) {
-        let building = await buildingsData.getBuilding(user.buildings[i]._id);
-        let taskList = building.Tasks;
-        for (let j = 0; j < taskList.length; j++) {
-            let task = await tasksData.getTask(taskList[j]._id);
-            allTaskObjects.push(task);
-        }
-    }
-
-    //TODO
-
-}
-
 module.exports = {
     createUser,
     checkUser,
@@ -664,9 +588,7 @@ module.exports = {
     updateCompletionFrequency,
     getUserByUsername,
     updateLevel,
-    addAwardToUser,
     addFriend,
     removeFriend,
-    deleteUser,
-    emailUpcomingDueDates
+    deleteUser
 }

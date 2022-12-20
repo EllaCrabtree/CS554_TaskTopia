@@ -2,6 +2,9 @@ const mongoCollections = require("../config/mongoCollections");
 const buildings = mongoCollections.buildings;
 const { ObjectId, Binary } = require("mongodb");
 const im = require('imagemagick');
+// const gm = require('gm')
+const path = require('path')
+const fs = require('fs');
 
 //Subdocument Avatar for Buildings
 async function createAvatar(buildingId, name, image, welcome, completion, overdue) {
@@ -35,16 +38,45 @@ async function createAvatar(buildingId, name, image, welcome, completion, overdu
     // if (building === null) throw 'No building with that id';
 
     let avatarId = new ObjectId();
-    // const pathToImage = cropAvatar(avatarId, image);
+    // const pathToImage = await cropAvatar(avatarId, image);
+    // console.log(pathToImage);
 
-    const newAvatar = {
-        _id: avatarId,
-        name: name,
-        image: image,
-        welcome: welcome,
-        completion: completion,
-        overdue: overdue
-    };
+    let buffer = Buffer.from(image.split(',')[1], "base64");
+    let fileExt = image.substring(image.indexOf('/')+1, image.indexOf(';'));
+
+    fs.writeFileSync(path.join(__dirname, `../files/test1.${fileExt}`), buffer);
+    console.log(fileExt);
+
+    let compressedImagePath;
+    const res = im.resize({
+        srcPath: path.join(__dirname, `../files/test1.${fileExt}`),
+        dstPath: path.join(__dirname, `../files/test2.jpg`),
+        format: 'JPG',
+        quality: 50,
+        width: 250
+    });
+    console.log('resized');
+
+    compressedImagePath = fs.readFileSync(path.join(__dirname, `../files/test2.jpg`), {encoding: 'base64'});
+        compressedImagePath = `data:image/jpeg;base64,${compressedImagePath}`;
+
+        const newAvatar = {
+            _id: avatarId,
+            name: name,
+            image: compressedImagePath,
+            welcome: welcome,
+            completion: completion,
+            overdue: overdue
+        };
+
+        const insertInfo = await buildingCollection.insertOne(newAvatar)
+        if (insertInfo.insertedCount === 0) throw 'Could not add avatar';
+
+        console.log(insertInfo.insertedId);
+        return getAvatar(insertInfo.insertedId.toString(), 'urmom');
+
+    // console.log(res);
+    
 
     //Uncomment this later
 
@@ -53,9 +85,6 @@ async function createAvatar(buildingId, name, image, welcome, completion, overdu
     // if (insertInfo.insertedCount === 0) throw 'Could not add avatar';
     // const newId = insertInfo.insertedId;
     // const avatar = await this.getAvatar(newId);
-
-    const insertInfo = await buildingCollection.insertOne(newAvatar)
-    if (insertInfo.insertedCount === 0) throw 'Could not add avatar';
 
     
 
@@ -185,24 +214,58 @@ async function updateAvatar(id, updatedAvatar) {
 }
 
 async function cropAvatar(avatarId, url) {
-    if (typeof avatarId !== 'string') throw 'avatarId must be a string';
-    avatarId = avatarId.trim();
-    if (avatarId.length === 0) throw 'avatarId must not be empty';
-    if (!ObjectId.isValid(avatarId)) throw 'avatarId must be a valid ObjectId';
+    // if (typeof avatarId !== 'string') throw 'avatarId must be a string';
+    // avatarId = avatarId.trim();
+    // if (avatarId.length === 0) throw 'avatarId must not be empty';
+    // if (!ObjectId.isValid(avatarId)) throw 'avatarId must be a valid ObjectId';
 
     if (typeof url !== 'string') throw 'image must be a string';
     url = url.trim();
     if (url.length === 0) throw 'image must not be empty';
 
-    const res = im.crop({
-        srcPath: url,
-        dstPath: `../avatarImgs/${avatarId}.png`,
-        width: 400,
-        quality: 1,
-        gravity: "Center"
+
+    // console.log(path.join(__dirname, `../files/kikimonster.jpg`));
+
+    // const res = im.crop({
+    //     srcPath: path.join(__dirname, `../files/kikimonster.jpg`),
+    //     dstPath: path.join(__dirname, `../files/kikimonsterupgrade2.webp`),
+    //     width: 400,
+    //     quality: 1,
+    //     gravity: "Center"
+    // });
+
+    let buffer = Buffer.from(url.split(',')[1], "base64");
+    fs.writeFileSync(path.join(__dirname, `../files/test1.jpg`), buffer);
+
+
+    // const res = im.convert([path.join(__dirname, `../files/kikimonster.jpg`), '-resize', '400x400', path.join(__dirname, `../files/kikimonsterupgrade2.webp`)])
+
+    let compressedImagePath;
+
+    im.resize({
+        srcPath: path.join(__dirname, `../files/test1.jpg`),
+        dstPath: path.join(__dirname, `../files/test2.jpg`),
+        quality: 50,
+        width: 250
+    }, function(err, stdout, stderr) {
+        if (err) throw err;
+        console.log('resized');
+
+        compressedImagePath = fs.readFileSync(path.join(__dirname, `../files/test2.jpg`), {encoding: 'base64'});
+        // return `data:image/jpeg;base64,${compressedImagePath}`;
     });
 
-    return `../avatarImgs/${avatarId}.png`;
+    // console.log('base64 new encoding')
+    // console.log(compressedImagePath)
+
+    return `data:image/jpeg;base64,${compressedImagePath}`;
+
+
+    // gm(Buffer.from(url, "base64")).resize(240, 240).write('imageOutput.png', (err) => {
+    //     console.log(err);
+    // })
+
+    // return `../avatarImgs/${avatarId}.png`;
 }
 
 module.exports = {

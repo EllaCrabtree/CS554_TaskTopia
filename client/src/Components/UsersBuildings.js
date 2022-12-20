@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Building from './Building';
 import Error from './Error';
 
-function Avatar(props) {
-    const [avatarData, setAvatarData] = useState(null);
+function UsersBuildings() {
+    const [buildingData, setBuildingData] = useState(null);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const { data } = await axios.get(`http://localhost:4000/private/avatars/${props.id}`);
-                setAvatarData(data);
+                const { data } = await axios.get(`http://localhost:4000/private/users/buildings`);
+                setBuildingData(data);
             } catch (e) {
                 setErr(true);
                 setErrData(e);
@@ -19,16 +20,16 @@ function Avatar(props) {
             }
         }
         fetchData()
-    }, [props.id]);
+    });
 
     return (<div>
-        {avatarData &&
-            <div className='avatarContainer'>
-                <p>TODO show avatar data</p>
-            </div>
+        {buildingData &&
+            buildingData.map(element => {
+                return <Building id={element} />
+            })
         }
         {err && <Error error={errData} />}
     </div >)
 }
 
-export default Avatar;
+export default UsersBuildings;

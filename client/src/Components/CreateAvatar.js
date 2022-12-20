@@ -3,6 +3,16 @@ import Building from './Building';
 import Avatar from './Avatar';
 import axios from 'axios';
 import Error from './Error';
+import { motion } from 'framer-motion'
+
+const avatarAnimation = {
+    hover: {
+        scale: 1.5,
+        transition: {
+            yoyo: Infinity
+        }
+    }
+}
 
 function CreateAvatar(props) {
 
@@ -51,10 +61,9 @@ function CreateAvatar(props) {
             console.log(formData)
             const { data } = await axios.post(`http://localhost:4000/avatar/`, formData, {headers: {"content-type": "multipart/form-data"}});
 
-            // setCreated(data);
-            // setImageData(formData.img)
-            // console.log('This is the img')
-            console.log(formData.img)
+            setImageData(data.image);
+            
+
         } catch (e) {
             setErr(true);
             setErrData(e);
@@ -140,7 +149,18 @@ function CreateAvatar(props) {
                     <button onClick={CreateAvatar}>Create Avatar</button>
                     <button onClick={GetAvatar}>Get Avatar</button>
                 </div>
-                {imageData != null && <img src={imageData} alt='Odin' width='500' height='500'/>}
+                <motion.div animate={{
+                    scale: 1.05,
+                    // backgroundColor: '#fff',
+                    // boxShadow: '10px 10px 0 rgba(0, 0, 0, 0.2)',
+                    transition: {
+                        repeat: Infinity, repeatType: 'reverse', delay: 1
+                    }
+                }}
+                >
+                    {imageData != null && <img id='avatarImage' src={imageData} alt='Odin'/>}
+                </motion.div >
+                
             </div>}
         {/* {createdAvatar && !err && <Building id={createdAvatar._id} />} */}
         {err && <Error error={errData} />}
