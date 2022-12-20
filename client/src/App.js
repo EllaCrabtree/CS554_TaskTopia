@@ -43,6 +43,7 @@ function App() {
 
               <Route path="/login" element={<Login />} />
               <Route path="/signUp" element={<SignUp />} />
+              <Route path="/buildings" element={<UserBuilding />}></Route>
               <Route exact path="/badges" element={<Badges />} />
             </Routes>
           </div>

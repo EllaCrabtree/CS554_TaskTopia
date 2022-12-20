@@ -1,24 +1,25 @@
 const mongoCollections = require("../config/mongoCollections");
 const buildings = mongoCollections.buildings;
+const avatars = mongoCollections.avatars;
 const { ObjectId, Binary } = require("mongodb");
 const im = require('imagemagick');
 // const gm = require('gm')
 const path = require('path')
 const fs = require('fs');
 
-//Subdocument Avatar for Buildings
-async function createAvatar(buildingId, name, image, welcome, completion, overdue) {
-    if (arguments.length !== 6) throw 'You must provide 6 arguments for your avatar (buildingId,name, image, welcome, completion, overdue)';
-    if (!buildingId) throw 'You must provide a buildingId for your avatar';
+//Avatar
+async function createAvatar(name, image, welcome, completion, overdue) {
+    if (arguments.length !== 5) throw 'You must provide 5 arguments for your avatar (name, image, welcome, completion, overdue)';
+    // if (!buildingId) throw 'You must provide a buildingId for your avatar';
     if (!name) throw 'You must provide a name for your avatar';
     if (!image) throw 'You must provide an image for your avatar';
     if (!welcome) throw 'You must provide a welcome for your avatar';
     if (!completion) throw 'You must provide a completion for your avatar';
     if (!overdue) throw 'You must provide an overdue for your avatar';
 
-    if (typeof buildingId !== 'string') throw 'buildingId must be a string';
-    buildingId = buildingId.trim();
-    if (buildingId.length === 0) throw 'buildingId must not be empty';
+    // if (typeof buildingId !== 'string') throw 'buildingId must be a string';
+    // buildingId = buildingId.trim();
+    // if (buildingId.length === 0) throw 'buildingId must not be empty';
     // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
 
     if (typeof name !== 'string') throw 'name must be a string';
@@ -33,35 +34,35 @@ async function createAvatar(buildingId, name, image, welcome, completion, overdu
     if (!Array.isArray(completion)) throw 'completion must be an array';
     if (!Array.isArray(overdue)) throw 'overdue must be an array';
 
-    const buildingCollection = await buildings();
+    const avatarCollection = await avatars();
     // const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
     // if (building === null) throw 'No building with that id';
 
-    let avatarId = new ObjectId();
+    // let avatarId = new ObjectId();
     // const pathToImage = await cropAvatar(avatarId, image);
     // console.log(pathToImage);
 
-    let buffer = Buffer.from(image.split(',')[1], "base64");
-    let fileExt = image.substring(image.indexOf('/')+1, image.indexOf(';'));
+    // let buffer = Buffer.from(image.split(',')[1], "base64");
+    // let fileExt = image.substring(image.indexOf('/')+1, image.indexOf(';'));
 
-    fs.writeFileSync(path.join(__dirname, `../files/test1.${fileExt}`), buffer);
-    console.log(fileExt);
+    // fs.writeFileSync(path.join(__dirname, `../files/test1.${fileExt}`), buffer);
+    // console.log(fileExt);
 
-    let compressedImagePath;
-    const res = im.resize({
-        srcPath: path.join(__dirname, `../files/test1.${fileExt}`),
-        dstPath: path.join(__dirname, `../files/test2.jpg`),
-        format: 'JPG',
-        quality: 50,
-        width: 250
-    });
-    console.log('resized');
+    // let compressedImagePath;
+    // const res = im.crop({
+    //     srcPath: path.join(__dirname, `../files/test1.${fileExt}`),
+    //     dstPath: path.join(__dirname, `../files/test2.jpg`),
+    //     format: 'JPG',
+    //     quality: 50,
+    //     width: 250,
+    //     height: 250
+    // });
+    // console.log('resized');
 
-    compressedImagePath = fs.readFileSync(path.join(__dirname, `../files/test2.jpg`), {encoding: 'base64'});
-        compressedImagePath = `data:image/jpeg;base64,${compressedImagePath}`;
+    // compressedImagePath = fs.readFileSync(path.join(__dirname, `../files/test2.jpg`), {encoding: 'base64'});
+    compressedImagePath = `data:image/jpeg;base64,${image}`;
 
         const newAvatar = {
-            _id: avatarId,
             name: name,
             image: compressedImagePath,
             welcome: welcome,
@@ -69,11 +70,11 @@ async function createAvatar(buildingId, name, image, welcome, completion, overdu
             overdue: overdue
         };
 
-        const insertInfo = await buildingCollection.insertOne(newAvatar)
+        const insertInfo = await avatarCollection.insertOne(newAvatar)
         if (insertInfo.insertedCount === 0) throw 'Could not add avatar';
 
         console.log(insertInfo.insertedId);
-        return getAvatar(insertInfo.insertedId.toString(), 'urmom');
+        return getAvatar(insertInfo.insertedId.toString());
 
     // console.log(res);
     
@@ -90,52 +91,12 @@ async function createAvatar(buildingId, name, image, welcome, completion, overdu
 
 }
 
-async function getAvatar(buildingId, id) {
-    if (!buildingId) throw 'You must provide a buildingId to search for';
-    if (typeof buildingId !== 'string') throw 'buildingId must be a string';
-    buildingId = buildingId.trim();
-    if (buildingId.length === 0) throw 'buildingId must not be empty';
+async function getAvatar(id) {
+    // if (!buildingId) throw 'You must provide a buildingId to search for';
+    // if (typeof buildingId !== 'string') throw 'buildingId must be a string';
+    // buildingId = buildingId.trim();
+    // if (buildingId.length === 0) throw 'buildingId must not be empty';
     // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
-
-    // if (!id) throw 'You must provide an id to search for';
-    // if (typeof id !== 'string') throw 'id must be a string';
-    // id = id.trim();
-    // if (id.length === 0) throw 'id must not be empty';
-    // if (!ObjectId.isValid(id)) throw 'id must be a valid ObjectId';
-
-    const buildingCollection = await buildings();
-    const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
-    if (building === null) throw 'No building with that id';
-
-    // const avatar = building.avatar.find(avatar => avatar._id.toString() === id);
-    // if (avatar === null) throw 'No avatar with that id';
-    // return avatar;
-
-    return building;
-
-}
-
-
-async function getAllAvatars(buildingId) {
-    if (!buildingId) throw 'You must provide a buildingId to search for';
-    if (typeof buildingId !== 'string') throw 'buildingId must be a string';
-    buildingId = buildingId.trim();
-    if (buildingId.length === 0) throw 'buildingId must not be empty';
-    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
-
-    const buildingCollection = await buildings();
-    const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
-    if (building === null) throw 'No building with that id';
-
-    return building.avatar;
-}
-
-async function removeAvatar(buildingId, id) {
-    if (!buildingId) throw 'You must provide a buildingId to search for';
-    if (typeof buildingId !== 'string') throw 'buildingId must be a string';
-    buildingId = buildingId.trim();
-    if (buildingId.length === 0) throw 'buildingId must not be empty';
-    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
 
     if (!id) throw 'You must provide an id to search for';
     if (typeof id !== 'string') throw 'id must be a string';
@@ -143,14 +104,55 @@ async function removeAvatar(buildingId, id) {
     if (id.length === 0) throw 'id must not be empty';
     if (!ObjectId.isValid(id)) throw 'id must be a valid ObjectId';
 
-    const buildingCollection = await buildings();
-    const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
-    if (building === null) throw 'No building with that id';
+    const avatarCollection = await avatars();
+    const avatar = await avatarCollection.findOne({ _id: ObjectId(id) });
+    if (avatar === null) throw 'No building with that id';
 
-    const avatar = building.avatar.find(avatar => avatar._id.toString() === id);
+    avatar._id = avatar._id.toString();
+
+    // const avatar = building.avatar.find(avatar => avatar._id.toString() === id);
+    // if (avatar === null) throw 'No avatar with that id';
+    // return avatar;
+
+    return avatar;
+}
+
+
+// async function getAllAvatars(buildingId) {
+//     if (!buildingId) throw 'You must provide a buildingId to search for';
+//     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
+//     buildingId = buildingId.trim();
+//     if (buildingId.length === 0) throw 'buildingId must not be empty';
+//     if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+
+//     const buildingCollection = await buildings();
+//     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
+//     if (building === null) throw 'No building with that id';
+
+//     return building.avatar;
+// }
+
+async function removeAvatar(id) {
+    // if (!buildingId) throw 'You must provide a buildingId to search for';
+    // if (typeof buildingId !== 'string') throw 'buildingId must be a string';
+    // buildingId = buildingId.trim();
+    // if (buildingId.length === 0) throw 'buildingId must not be empty';
+    // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+
+    if (!id) throw 'You must provide an id to search for';
+    if (typeof id !== 'string') throw 'id must be a string';
+    id = id.trim();
+    if (id.length === 0) throw 'id must not be empty';
+    if (!ObjectId.isValid(id)) throw 'id must be a valid ObjectId';
+
+    const avatarCollection = await avatars();
+    const avatar = await avatarCollection.findOne({ _id: ObjectId(id) });
     if (avatar === null) throw 'No avatar with that id';
 
-    const removeInfo = await buildingCollection.updateOne({ _id: ObjectId(buildingId) }, { $pull: { avatar: { _id: ObjectId(id) } } });
+    // const avatar = building.avatar.find(avatar => avatar._id.toString() === id);
+    // if (avatar === null) throw 'No avatar with that id';
+
+    const removeInfo = await buildingCollection.deleteOne({ _id: ObjectId(id) });
     if (removeInfo.deletedCount === 0) {
         throw `Could not delete avatar with id of ${id}`;
     }
@@ -240,20 +242,20 @@ async function cropAvatar(avatarId, url) {
 
     // const res = im.convert([path.join(__dirname, `../files/kikimonster.jpg`), '-resize', '400x400', path.join(__dirname, `../files/kikimonsterupgrade2.webp`)])
 
-    let compressedImagePath;
+    // let compressedImagePath;
 
-    im.resize({
-        srcPath: path.join(__dirname, `../files/test1.jpg`),
-        dstPath: path.join(__dirname, `../files/test2.jpg`),
-        quality: 50,
-        width: 250
-    }, function(err, stdout, stderr) {
-        if (err) throw err;
-        console.log('resized');
+    // im.resize({
+    //     srcPath: path.join(__dirname, `../files/test1.jpg`),
+    //     dstPath: path.join(__dirname, `../files/test2.jpg`),
+    //     quality: 50,
+    //     width: 250
+    // }, function(err, stdout, stderr) {
+    //     if (err) throw err;
+    //     console.log('resized');
 
-        compressedImagePath = fs.readFileSync(path.join(__dirname, `../files/test2.jpg`), {encoding: 'base64'});
-        // return `data:image/jpeg;base64,${compressedImagePath}`;
-    });
+    //     compressedImagePath = fs.readFileSync(path.join(__dirname, `../files/test2.jpg`), {encoding: 'base64'});
+    //     // return `data:image/jpeg;base64,${compressedImagePath}`;
+    // });
 
     // console.log('base64 new encoding')
     // console.log(compressedImagePath)
@@ -271,7 +273,7 @@ async function cropAvatar(avatarId, url) {
 module.exports = {
     createAvatar,
     getAvatar,
-    getAllAvatars,
+    // getAllAvatars,
     removeAvatar,
     updateAvatar,
     cropAvatar
