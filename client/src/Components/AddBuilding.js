@@ -55,17 +55,16 @@ function AddBuilding() {
 
     return (<div>
         {createdBuildings && !err && createdBuildings.map((building) => {
-        
             return (
                 <li key={building.key}>
                     <h3>{building.building.name}</h3>
                     <Link className={building.building.buildingCode} to={`/buildings/${building.building._id}`}> Type = {building.building.buildingCode} </Link>
                     <button onClick={() => setDeleteData(building.building)}>Delete Building</button>
                 </li>)
-        })},
+        })}
 
         {!err &&
-            <li key={"addBuildingForm"}>
+            <li className="addBuildingLI" key={"addBuildingForm"}>
                 <div>
                     <div className='add'>
                         <div className='input-selection'>
