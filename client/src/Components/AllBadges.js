@@ -25,7 +25,7 @@ function AllBadges() {
     return (
         <div>
             {badgesData && badgesData.map(element => {
-                return (<Badge id={element._id} />)
+                return (<Badge id={element._id} key={element._id}/>)
             })
             }
             {err && <Error error={errData} />}

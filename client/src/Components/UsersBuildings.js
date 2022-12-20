@@ -20,7 +20,7 @@ function UsersBuildings() {
             }
         }
         fetchData()
-    });
+    },[]);
 
     return (<div>
         {buildingData &&
