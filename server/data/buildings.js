@@ -67,7 +67,7 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
         throw 'Error: User not found!'
     }
 
-    const userEntry = {buildingID: newId, name: name, code: buildingCode};
+    const userEntry = { buildingID: newId, name: name, code: buildingCode };
 
     const update = await userCollection.updateOne(
         { _id: ObjectId(foundUser._id) },
@@ -84,7 +84,7 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
     return building;
 }
 
-async function completeTask(buildingId){
+async function completeTask(buildingId) {
     if (!buildingId) throw 'You must provide an id to search for';
     if (typeof buildingId !== 'string') throw 'id must be a string';
     buildingId = buildingId.trim();
@@ -94,15 +94,15 @@ async function completeTask(buildingId){
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(new_buildingId) });
     if (building === null) throw 'No building with that id';
-    
+
     let new_xpMax;
     let new_level;
     let new_xp = building.xp + 10;
-    if(new_xp >= building.xpMax){
+    if (new_xp >= building.xpMax) {
         new_xp = new_xp - building.xpMax;
-        new_xpMax = building.xpMax*2;
+        new_xpMax = building.xpMax * 2;
         new_level = building.level + 1;
-        if(new_level > 3){
+        if (new_level > 3) {
             new_level = 3;
             new_xp = building.xpMax;
         }
@@ -233,14 +233,14 @@ async function deleteBuilding(id) {
 
 async function getAllBuildings() {
     const buildingCollection = await buildings();
-    try{
+    try {
         const buildings = await buildingCollection.find({}).toArray();
         return buildings;
     } catch (e) {
         console.log(e);
         throw e;
     }
-    
+
 }
 
 async function getUserBuildings(username) {
@@ -266,12 +266,12 @@ async function addAvatarToBuilding(buildingId, avatarId) {
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
 
     // const updatedBuilding = {
-        
+
     // }
 
     const updatedInfo = await buildingCollection.updateOne(
         { _id: ObjectId(buildingId) },
-        { $set: {Avatar: avatarId} });
+        { $set: { Avatar: avatarId } });
 
     if (building == null) throw 'Error: Building not found';
 

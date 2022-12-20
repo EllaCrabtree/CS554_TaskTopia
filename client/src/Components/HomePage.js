@@ -7,7 +7,7 @@ const HomePage = () => {
                 <h1>TaskTopia</h1>
             </header>
 
-            <section>
+            <div>
                 <p>Introducing TaskTopia - a task manager web application designed to 'gamify' productivity.
                     Each user that signs up for TaskTopia has their own city of which they can add buildings.
                     However, the buildings available are at a basic level and can only be leveled up if the user consistently completes tasks they have listed.
@@ -16,14 +16,14 @@ const HomePage = () => {
                     Users can customize the avatar into people they know by uploading an image to the website.
                     So if you want your mom yelling at you if you haven't done your laundry yet, then now you can!
                 </p>
-            </section>
-            
+            </div>
+
             <br />
 
             <footer>
                 <p>Log In or Sign Up to get started!</p>
             </footer>
-            
+
         </div>
     )
 }

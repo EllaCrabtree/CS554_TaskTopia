@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 // import Building from './Building';
 import Error from './Error';
@@ -19,7 +19,7 @@ function UsersBuildings() {
             try {
                 const { data } = await axios.get(`http://localhost:4000/private/users/buildings`);
                 console.log(data);
-                
+
                 if (data.length == 0) {
                     setBuildingData(false)
                 } else {
@@ -33,8 +33,8 @@ function UsersBuildings() {
         }
         async function deleteBuilding() {
             try {
-                console.log(`http://localhost:4000/private/buildings/`+deleteData.buildingID);
-                const { data } = await axios.delete(`http://localhost:4000/private/buildings/`+deleteData.buildingID);
+                console.log(`http://localhost:4000/private/buildings/` + deleteData.buildingID);
+                const { data } = await axios.delete(`http://localhost:4000/private/buildings/` + deleteData.buildingID);
                 setDeleteData(null);
                 console.log(data);
             } catch (e) {
@@ -44,10 +44,10 @@ function UsersBuildings() {
             }
         }
         fetchData()
-        if(deleteData){
-        deleteBuilding()
+        if (deleteData) {
+            deleteBuilding()
         }
-    },[addBuildingForm, deleteData]);
+    }, [addBuildingForm, deleteData]);
 
 
     const getBuildingForm = () => {
@@ -55,26 +55,25 @@ function UsersBuildings() {
     }
 
     return (
-    <div>
-        {!buildingData && <h1> No building data</h1>}
-       
-        {buildingData &&<ul>
-            {buildingData.map(element => {
-                return (
-                    <li key={element.buildingID}>
-                        <h3>{element.name}</h3>
-                        <Link className={element.code} to={`/buildings/${element.buildingID}`}> Type = {element.code} </Link>
-                        <button onClick={() => setDeleteData(element)}>Delete Building</button>
-                    </li>
-                )
-            })} 
-            {addBuildingForm && <AddBuilding />}
+        <div>
+            {!buildingData && <h1> No building data</h1>}
+
+            {buildingData && <ul>
+                {buildingData.map(element => {
+                    return (
+                        <li key={element.buildingID}>
+                            <h3>{element.name}</h3>
+                            <Link className={element.code} to={`/buildings/${element.buildingID}`}> Type = {element.code} </Link>
+                            <button onClick={() => setDeleteData(element)}>Delete Building</button>
+                        </li>
+                    )
+                })}
             </ul>
-        }
-        
-        {err && <Error error={errData} />}
-        <button onClick={getBuildingForm}>Create A New Building</button>
-    </div >)
+            }
+            {addBuildingForm && <AddBuilding />}
+            {err && <Error error={errData} />}
+            <button onClick={getBuildingForm}>Create A New Building</button>
+        </div >)
 }
 
 export default UsersBuildings;

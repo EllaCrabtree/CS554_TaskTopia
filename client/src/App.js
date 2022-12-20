@@ -19,9 +19,9 @@ function App() {
     <Router>
       <AuthProvider>
         <div className="App">
-          <section>
+          <div>
             <Navigation />
-          </section>
+          </div>
           <div className="App-body">
             <Routes>
               <Route exact path="/" element={<HomePage />} />
