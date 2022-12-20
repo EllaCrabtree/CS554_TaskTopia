@@ -138,8 +138,14 @@ async function deleteBuilding(id) {
 
 async function getAllBuildings() {
     const buildingCollection = await buildings();
-    const buildings = await buildingCollection.find({}).toArray();
-    return buildings;
+    try{
+        const buildings = await buildingCollection.find({}).toArray();
+        return buildings;
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
+    
 }
 
 async function getUserBuildings(username) {

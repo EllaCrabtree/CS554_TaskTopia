@@ -4,13 +4,14 @@ const static = express.static(__dirname + '/public');
 const configRoutes = require('./routes');
 const session = require('express-session');
 const redis = require('redis');
-const client = redis.createClient({
-    legacyMode: true,
-    socket: {
-        host: 'redis',
-        port: 6379
-    }
-});
+// const client = redis.createClient({
+//     legacyMode: true,
+//     socket: {
+//         host: 'redis',
+//         port: 6379
+//     }
+// });
+const client = redis.createClient();
 client.connect().then(() => { });
 
 const cors = require('cors');
@@ -29,7 +30,7 @@ app.use(session({
 
 app.use('/private', (req, res, next) => {
     if (!req.session.user) {
-        return res.status(403).render('pages/account/login', {
+        return res.status(403).json({
             title: "Login",
             name: "Login",
             error: "You are not logged in"
