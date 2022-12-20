@@ -120,8 +120,9 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     if (!req.params.id) return res.status(400).json({ error: 'You must provide an id for the building to delete it.' });
+    console.log("Delete building: " + req.params.id);
     try {
-        await buildingData.removeBuilding(req.params.id);
+        await buildingData.deleteBuilding(req.params.id);
         res.sendStatus(200);
     } catch (e) {
         res.status(404).json({ error: 'Building not found' });

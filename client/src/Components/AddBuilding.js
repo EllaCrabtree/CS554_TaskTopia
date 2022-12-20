@@ -1,5 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Error from './Error';
@@ -7,22 +7,45 @@ import Error from './Error';
 
 function AddBuilding() {
     const [formData, setFormData] = useState({ buildingCode: 'ADMIN', level: 1 });
-    const [createdBuilding, setCreated] = useState(undefined);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
     const [createdBuildings, setCreatedBuildings] = useState([]);
+    const [deleteData, setDeleteData] = useState(null);
+
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
+
+    useEffect(() => {
+        async function deleteBuilding() {
+            try {
+                console.log(deleteData);
+                console.log(`http://localhost:4000/private/buildings/` + deleteData._id);
+                const { data } = await axios.delete(`http://localhost:4000/private/buildings/` + deleteData._id);
+                setDeleteData(null);
+
+                setCreatedBuildings(createdBuildings.filter((building) => building.key !== deleteData._id + "inForm"));
+
+                console.log(data);
+            } catch (e) {
+                setErr(true);
+                setErrData(e);
+                console.log(e);
+            }
+        }
+        if (deleteData) {
+            deleteBuilding()
+        }
+    }, [deleteData, createdBuildings]);
+
 
     async function CreateBuilding() {
         try {
             console.log(formData);
             const { data } = await axios.post(`http://localhost:4000/private/buildings/`, formData);
-            setCreated(data);
-            let tempCreatedBuildings = createdBuildings;
-            tempCreatedBuildings.push(data);
-            setCreatedBuildings(tempCreatedBuildings);
+            setCreatedBuildings((prev) => [...prev, { key: data._id + "inForm", building: data }]);
+            console.log(data);
+
         } catch (e) {
             setErr(true);
             setErrData(e);
@@ -31,15 +54,16 @@ function AddBuilding() {
     }
 
     return (<div>
-        {createdBuilding && !err &&
-            createdBuildings.map(element => {
-                return (
-                    <li key={element.buildingID+"inForm"}>
-                        <h3>{element.name}</h3>
-                        <Link className={element.buildingCode} to={`/buildings/${element.buildingID}`}> Type = {element.buildingCode} </Link>
-                    </li>
-                )
-            })}
+        {createdBuildings && !err && createdBuildings.map((building) => {
+        
+            return (
+                <li key={building.key}>
+                    <h3>{building.building.name}</h3>
+                    <Link className={building.building.buildingCode} to={`/buildings/${building.building._id}`}> Type = {building.building.buildingCode} </Link>
+                    <button onClick={() => setDeleteData(building.building)}>Delete Building</button>
+                </li>)
+        })},
+
         {!err &&
             <li key={"addBuildingForm"}>
                 <div>
@@ -109,9 +133,11 @@ function AddBuilding() {
                     </div>
                 </div>
             </li>}
+
         {err && <Error error={errData} />}
-    </div>
-    );
+
+    </div>);
 }
+
 
 export default AddBuilding;
