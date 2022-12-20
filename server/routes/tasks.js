@@ -48,4 +48,17 @@ router
         }
     });
 
+router.delete('/:buildingId/:taskId', async (req, res) => {
+    if (!req.params.buildingId) return res.status(400).json({ error: 'You must provide an id for the task\'s building.' });
+    if (!req.params.taskId) return res.status(400).json({ error: 'You must provide an id for the task.' });
+    try {
+        const val = await taskData.removeTask(req.params.buildingId, req.params.taskId);
+        return res.status(200).json("Task Deleted");
+}
+    catch (e) {
+        return res.status(404).json({ error: e })
+        }
+});
+    
+
 module.exports = router;

@@ -9,6 +9,7 @@ function Task(props) {
     const [err, setErr] = useState(false);
     const [addBtnToggle, setBtnToggle] = useState(false);
     const [errData, setErrData] = useState(undefined);
+    const [deleteTask, setDeleteTask] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
@@ -21,11 +22,23 @@ function Task(props) {
                 console.log(e);
             }
         }
+        
         fetchData()
     }, [props.buildingId, props.taskId, addBtnToggle]);
 
+    async function completeTask() {
+        try {
+            await axios.delete(`http://localhost:4000/private/task/${props.buildingId}/${props.taskId}`);
+            props.xp = props.xp + 10;
+            setDeleteTask(true);
+        } catch (e) {
+            setErr(true);
+            setErrData(e);
+            console.log(e);
+        }
+    }
     return (<div>
-        {taskData &&
+        {taskData && !deleteTask &&
             <div className='taskContainer'>
                 {taskData.name && <h1>{taskData.name}</h1>}
                 {taskData.dateDue && <h2>{taskData.dateDue}</h2>}
@@ -38,6 +51,8 @@ function Task(props) {
                 })}
                 {taskData.datePosted && <p>{taskData.datePosted}</p>}
                 {!addBtnToggle ? <button onClick={() => setBtnToggle(!addBtnToggle)} >Add New Note</button> : <button onClick={() => setBtnToggle(!addBtnToggle)} > Stop Adding New Notes</button>}
+                <br />
+                <button onClick={completeTask}>Complete Task</button>
                 <br />
                 {addBtnToggle && <AddNote buildingId={props.buildingId} taskId={props.taskId} />}
             </div>}
