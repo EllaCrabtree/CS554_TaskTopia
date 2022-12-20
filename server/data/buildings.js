@@ -46,7 +46,7 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
         xp: xp,
         xpMax: xpMax,
         level: level,
-        Avatar: [],
+        Avatar: 'NONE',
         Tasks: []
     };
 
@@ -192,11 +192,29 @@ async function getUserBuildings(username) {
     const foundUser = await userCollection.findOne({ username: new_username });
 
     if (!foundUser) throw 'Error: User not found!';
-    
+
     // foundUser.buildings.forEach(element => {
     //     element = element.toString();
     // })
     return foundUser.buildings
+}
+
+async function addAvatarToBuilding(buildingId, avatarId) {
+    const buildingCollection = await buildings();
+    const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
+
+    // const updatedBuilding = {
+        
+    // }
+
+    const updatedInfo = await buildingCollection.updateOne(
+        { _id: ObjectId(buildingId) },
+        { $set: {Avatar: avatarId} });
+
+    if (building == null) throw 'Error: Building not found';
+
+    console.log('added successfully')
+    return;
 }
 
 module.exports = {
@@ -205,5 +223,6 @@ module.exports = {
     updateBuilding,
     deleteBuilding,
     getAllBuildings,
-    getUserBuildings
+    getUserBuildings,
+    addAvatarToBuilding
 };

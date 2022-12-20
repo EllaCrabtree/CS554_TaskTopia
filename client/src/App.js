@@ -14,6 +14,7 @@ import Navigation from './Components/Navigation';
 import UserBuilding from './Components/UsersBuildings';
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import CreateAvatar from './Components/CreateAvatar';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               <Route path='/signUp' element={<SignUp />} />
               <Route path='/buildings' element={<UserBuilding />}></Route>
               <Route exact path='/badges' element={<Badges />} />
+              <Route path='/avatarTestForm' element={<CreateAvatar />}> </Route>
             </Routes>
           </div>
         </div>

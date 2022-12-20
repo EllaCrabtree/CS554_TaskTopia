@@ -22,10 +22,15 @@ const { ObjectId } = require("mongodb");
 
 // var upload = multer({storage: storage}).single('img')
 
-router.get('/', async (req, res) => {
+router.get('/:avatarID', async (req, res) => {
     try {
+
+
+        const avatarID = req.params.avatarID
+        // console.log(avatarID)
+
         console.log('urmom')
-        const getAvatar = await avatarData.getAvatar('63a14244a9c0d4c9c669e144', 'urmom');
+        const getAvatar = await avatarData.getAvatar(avatarID);
         console.log('urmom2')
         res.json(getAvatar);
     } catch (e) {
@@ -36,7 +41,8 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     // console.log(req.headers)
     // console.log(req)
-    const {img} = req.body;
+    const {name, img, welcomeList, niceList, meanList, buildingID} = req.body;
+    console.log(req.body)
     // let filePath = `../files/kikimonster.jpg`;
     // console.log(req.body.img.split(',')[1]);
     // let buffer = Buffer.from(req.body.img.split(',')[1], "base64");
@@ -57,7 +63,9 @@ router.post('/', async (req, res) => {
 
     try {
         console.log('Im uploading avatar')
-        const createdAvatar = await avatarData.createAvatar('1', 'Mom', img, [], [], []);
+        console.log(name)
+        const createdAvatar = await avatarData.createAvatar(name, img, welcomeList, niceList, meanList);
+        await buildingData.addAvatarToBuilding(buildingID, createdAvatar._id);
         // console.log('we did it')
         // res.json({data: 'ok'});
         res.json(createdAvatar);
