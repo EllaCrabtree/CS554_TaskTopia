@@ -5,8 +5,11 @@ const static = express.static(__dirname + '/public');
 const configRoutes = require('./routes');
 const session = require('express-session');
 const redis = require('redis');
+<<<<<<< HEAD
 
 const path = require('path');
+=======
+>>>>>>> 50fef45c7d10e70d6899111e89c059328798e285
 // const client = redis.createClient({
 //     legacyMode: true,
 //     socket: {
@@ -15,7 +18,11 @@ const path = require('path');
 //     }
 // });
 const client = redis.createClient();
+<<<<<<< HEAD
 client.connect().then(() => {});
+=======
+client.connect().then(() => { });
+>>>>>>> 50fef45c7d10e70d6899111e89c059328798e285
 
 const cors = require('cors');
 app.use(cors());
@@ -49,7 +56,7 @@ app.use(multer({
 
 app.use('/private', (req, res, next) => {
     if (!req.session.user) {
-        return res.status(403).render('pages/account/login', {
+        return res.status(403).json({
             title: "Login",
             name: "Login",
             error: "You are not logged in"

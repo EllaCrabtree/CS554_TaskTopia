@@ -10,7 +10,6 @@ const redis = require('redis');
 //         host: 'redis',
 //         port: 6379
 //     }});
-
 const client = redis.createClient();
 const badgeData = require('../data/badges');
 client.connect().then(() => { });

@@ -294,7 +294,6 @@ async function populateBadges(building, levels) {
     if (!building) throw `Building cannot be empty.`;
     if (typeof building != 'string') throw `Building must be a string.`;
     building = String.prototype.trim.call(building);
-
     if (!levels) throw `Levels cannot be empty.`;
     if (!Array.isArray(levels)) throw `Levels must be an array.`;
     let arr = [];
