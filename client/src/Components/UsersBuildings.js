@@ -22,7 +22,8 @@ function UsersBuildings() {
         fetchData()
     });
 
-    return (<div>
+    return (
+    <div>
         {buildingData &&
             buildingData.map(element => {
                 return <Building id={element} />

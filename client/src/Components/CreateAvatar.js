@@ -5,15 +5,6 @@ import axios from 'axios';
 import Error from './Error';
 import { motion } from 'framer-motion'
 
-const avatarAnimation = {
-    hover: {
-        scale: 1.5,
-        transition: {
-            yoyo: Infinity
-        }
-    }
-}
-
 function CreateAvatar(props) {
 
     const [formData, setFormData] = useState({ buildingType: '' });
@@ -93,8 +84,14 @@ function CreateAvatar(props) {
             <div>
                 <div className='add'>
                     <div className='input-selection'>
+
                         <label>
-                            Upload Image:
+                            Give your Avatar a name!
+                            <input type='text'></input>
+                        </label>
+
+                        <label>
+                            Upload Avatar's Image:
                             <input 
                                 onChange={(e) => handleImageChange(e)}
                                 type="file" 
@@ -103,6 +100,34 @@ function CreateAvatar(props) {
                                 accept="image/*"
                                 encType="multipart/form-data" />
                         </label>
+
+                        <label>
+                            How do you want your avatar to greet you?
+
+                            <input type="text"> </input>
+                        </label>
+                        <ul>
+
+                        </ul>
+
+                        <label>
+                            What do you want the avatar to say when you complete a task?
+
+                            <input type="text"></input>
+                        </label>
+                        <ul>
+
+                        </ul>
+
+                        <label>
+                            What do you want the avatar to say when you don't complete a task?
+                            <input type="text"> </input>
+                        </label>
+                        <ul>
+
+                        </ul>
+
+
                         {/* <label>
                             Building Type:
                             <select

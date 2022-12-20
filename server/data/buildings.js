@@ -2,9 +2,10 @@ const mongoCollections = require('../config/mongoCollections');
 const buildings = mongoCollections.buildings;
 const users = mongoCollections.users;
 const buildingCodes = require("./buildingCodes")
+const userFunctions = require('./users')
 const { ObjectId } = require("mongodb");
 
-async function createBuilding(buildingCode, xp, xpMax, level) {
+async function createBuilding(buildingCode, xp, xpMax, level, user) {
     //Check Arguments
     if (arguments.length !== 4) throw 'You must provide 4 arguments for your building (buildingCode,xp,xpMax,level)';
     if (!buildingCode) throw 'You must provide a buildingCode for your building';
@@ -30,6 +31,9 @@ async function createBuilding(buildingCode, xp, xpMax, level) {
     if (typeof level !== 'number') throw 'level must be a number';
     if (level < 0 || level > 3) throw 'level must be either 1, 2, or 3';
 
+    //Check User
+
+
     const buildingCollection = await buildings();
     const newBuilding = {
         buildingCode: buildingCode,
@@ -39,9 +43,12 @@ async function createBuilding(buildingCode, xp, xpMax, level) {
         Avatar: [],
         Tasks: []
     };
+
     const newInsertInformation = await buildingCollection.insertOne(newBuilding);
     if (newInsertInformation.insertedCount === 0) throw 'Could not add building';
     const newId = newInsertInformation.insertedId;
+
+    await userFunctions.addBuildingToUser(user, {buildingID: newId, type: buildingCode});
 
     const building = await this.getBuilding(newId.toString());
     return building;

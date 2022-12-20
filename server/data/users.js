@@ -252,7 +252,7 @@ async function getUserById(userId) {
     return user;
 }
 
-async function addBuildingToUser(username, buildingID) {
+async function addBuildingToUser(username, building) {
 
     //-----------------------------------Check Arguments-----------------------------------
     if (arguments.length != 2) {
@@ -287,7 +287,11 @@ async function addBuildingToUser(username, buildingID) {
         throw 'Error: User not found!'
     }
 
+    
+
     //-----------------------------------Check BuildingID-----------------------------------
+
+    const {buildingID, type} = building;
 
     if (!buildingID) throw 'Error: Building ID not supplied!'
     if (typeof buildingID !== 'string') throw 'Error: Building ID must be of type string!';
@@ -299,7 +303,7 @@ async function addBuildingToUser(username, buildingID) {
 
     const update = await userCollection.updateOne(
         { _id: ObjectId(foundUser._id) },
-        { $addToSet: { buildings: ObjectId(newBuildingID) } }
+        { $addToSet: { buildings: building } }
     )
 
     if (!update.matchedCount && !update.modifiedCount) {
