@@ -286,9 +286,6 @@ module.exports = {
     deleteBuilding,
     getAllBuildings,
     getUserBuildings,
-<<<<<<< HEAD
-    completeTask
-=======
+    completeTask,
     addAvatarToBuilding
->>>>>>> b7f05cac2a7bb59a0e87329c2a8b0076aa93001c
 };
