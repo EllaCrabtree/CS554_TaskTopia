@@ -3,31 +3,62 @@ import { Navigate } from 'react-router-dom';
 import {doCreateUserWithEmailandPassword} from '../firebase/FirebaseFunctions';
 import {AuthContext} from '../firebase/Auth';
 import SocialSignIn from './SocialSignIn';
+import axios from 'axios';
 
 function SignUp(){
     const {currentUser} = useContext(AuthContext);
     const [pwMatch, setPwMatch] = useState('');
+
+    async function CreateUser(firstName, lastName, username, password, email) {
+        let user = null;
+        try {
+            await axios.post(`http://localhost:4000/signup/`, {
+                firstName: firstName,
+                lastName: lastName,
+                username: username, 
+                password: password,
+                email: email
+            })
+            .then((result) => {
+                user = result.data;
+            })
+        } catch (e) {
+            console.log(e);
+        }
+
+        return user;
+    }
+
     const handleSignUp = async (e) => {
       e.preventDefault();
-      const {displayName, email, passwordOne, passwordTwo} = e.target.elements;
+      const {firstName, lastName, username, email, passwordOne, passwordTwo} = e.target.elements;
       if (passwordOne.value !== passwordTwo.value) {
         setPwMatch('Passwords do not match');
         return false;
       }
   
       try {
-        await doCreateUserWithEmailandPassword(
+        let result = await doCreateUserWithEmailandPassword(
           email.value,
           passwordOne.value,
-          displayName
         );
+
+        if(!result.errorMessage){
+            let addedUser = await CreateUser(firstName.value, lastName.value, username.value, passwordOne.value, email.value);
+            if(!addedUser){
+                alert('Could not successfully upload user to database')
+            }
+        }else{
+            alert(result.errorMessage);
+        }
+
       } catch (error) {
         alert(error);
       }
     };
   
     if (currentUser) {
-      return <Navigate to='/home' />;
+      return <Navigate to='/' />;
     }
 
     return(
@@ -37,23 +68,45 @@ function SignUp(){
             <form onSubmit={handleSignUp}>
                 <div>
                     <label>
-                        Name:
+                        First Name:
+                        <input 
+                            required
+                            name='firstName'
+                            type='text'
+                            placeholder='First Name'
+                        />
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Last Name:
                         <input
                             required
-                            name='displayName'
+                            name='lastName'
                             type='text'
-                            placeholder='Name'
+                            placeholder='Last Name'
                         />
                     </label>
                 </div>
                 <div>
                     <label>
                         Email:
-                        <input
+                        <input 
                             required
                             name='email'
                             type='email'
                             placeholder='Email'
+                        />
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Username:
+                        <input 
+                            required
+                            name='username'
+                            type='text'
+                            placeholder='Username'
                         />
                     </label>
                 </div>

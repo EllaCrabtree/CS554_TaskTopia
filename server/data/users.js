@@ -10,7 +10,7 @@ const badgeData = require('./badges');
 
 
 async function createUser(firstName, lastName, username, password, email) {
-
+    console.log("in create user");
     //-----------------------------------Check Arguments-----------------------------------
     if (arguments.length !== 5) {
         throw `Error: Insufficient number of arguments!`
@@ -32,6 +32,7 @@ async function createUser(firstName, lastName, username, password, email) {
 
     const new_firstname = firstName.trim();
 
+
     //-----------------------------------Check Last Name-----------------------------------
 
     if (!lastName) {
@@ -48,21 +49,27 @@ async function createUser(firstName, lastName, username, password, email) {
 
     const new_lastname = lastName.trim();
 
+
     //-----------------------------------Check email-----------------------------------
 
     if (!email) {
         throw 'Error: Email not supplied!'
     }
 
+
     if (typeof email !== 'string') {
         throw 'Error: Email must be a string!'
     }
+
 
     if (email.trim().length === 0) {
         throw 'Error: Email cannot be empty or only spaces!'
     }
 
+
     const new_email = email.trim();
+
+    console.log(new_email);
 
     const userCollection = await users(); //Initializing User Collection Variable
     const foundEmail = await userCollection.findOne({ email: new_email });
@@ -96,14 +103,12 @@ async function createUser(firstName, lastName, username, password, email) {
         throw 'Server Error: Username must be at least 4 characters or longer!'
     }
 
-
     //check if username is within database
     const foundUser = await userCollection.findOne({ username: new_username });
 
     if (foundUser) {
         throw 'Error: Username already in use!'
     }
-
 
     //-----------------------------------Check Password-----------------------------------
 
@@ -150,11 +155,11 @@ async function createUser(firstName, lastName, username, password, email) {
         friends: []
     }
 
-    const insertInfo = await userCollection.insertOne(newUser)
+    const insertInfo = await userCollection.insertOne(newUser);
     if (insertInfo.insertedCount === 0) throw 'Could not add user';
 
     const newId = insertInfo.insertedId;
-    newUser = await getUserByUsername(new_username)
+    newUser = await getUserByUsername(new_username);
     return newUser
 }
 
