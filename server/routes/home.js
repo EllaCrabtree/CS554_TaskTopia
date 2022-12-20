@@ -58,7 +58,6 @@ router.post('/signup', async (req, res) => {
 
     try {
         const newUser = await userData.createUser(userInfo.firstName, userInfo.lastName, userInfo.username, userInfo.password, userInfo.email);
-        console.log(newUser);
     } catch (e) {
         res.status(500).json({ error: e });
     }
