@@ -20,21 +20,21 @@ async function main() {
         const user2 = await usersData.createUser("Bella", "Cruz", "BellaTheBaddie", "TopSecret123$", "Baddie@gmail.com")
 
         //Create buildings
-        const bu1 = await buildingsData.createBuilding(buildingCodes.BuildingCodes.EDUCATION, 20, 100, 2);
-        const bu2 = await buildingsData.createBuilding(buildingCodes.BuildingCodes.ADMIN, 2, 30, 1);
-        const bu3 = await buildingsData.createBuilding(buildingCodes.BuildingCodes.PARK, 8, 10, 3);
+        const bu1 = await buildingsData.createBuilding("EDUCATION", 20, 100, 2);
+        const bu2 = await buildingsData.createBuilding("ADMIN", 2, 30, 1);
+        const bu3 = await buildingsData.createBuilding("PARK", 8, 10, 3);
 
         await usersData.addBuildingToUser(user1.username, bu1._id);
         await usersData.addBuildingToUser(user1.username, bu2._id);
         await usersData.addBuildingToUser(user2.username, bu3._id);
 
         // Populate all possible badges
-        const b1 = await badgeData.populateBadges(buildingCodes.BuildingCodes.ADMIN, [20, 25, 35]);
-        const b2 = await badgeData.populateBadges(buildingCodes.BuildingCodes.EDUCATION, [10, 20, 30]);
-        const b3 = await badgeData.populateBadges(buildingCodes.BuildingCodes.STORE, [5, 15, 30]);
-        const b4 = await badgeData.populateBadges(buildingCodes.BuildingCodes.PARK, [10, 20, 30]);
-        const b5 = await badgeData.populateBadges(buildingCodes.BuildingCodes.GARDEN, [5, 10, 20]);
-        const b6 = await badgeData.populateBadges(buildingCodes.BuildingCodes.HOME, [5, 15, 30]);
+        const b1 = await badgeData.populateBadges("ADMIN", [20, 25, 35]);
+        const b2 = await badgeData.populateBadges("EDUCATION", [10, 20, 30]);
+        const b3 = await badgeData.populateBadges("STORE", [5, 15, 30]);
+        const b4 = await badgeData.populateBadges("PARK", [10, 20, 30]);
+        const b5 = await badgeData.populateBadges("GARDEN", [5, 10, 20]);
+        const b6 = await badgeData.populateBadges("HOME", [5, 15, 30]);
 
         // Create Task
         const t1 = await taskData.createTask(bu1._id, "Finish 554 Project", "2022-12-20", ["Check Tota11y validation", "Check HTML validation"]);
