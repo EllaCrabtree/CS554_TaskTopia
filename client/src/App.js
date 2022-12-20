@@ -20,7 +20,7 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="App">
-          <section className='App-header'>
+          <section>
             <Navigation />
           </section>
           <div className='App-body'>

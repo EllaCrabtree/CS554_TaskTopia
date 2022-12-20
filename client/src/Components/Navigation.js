@@ -31,7 +31,7 @@ const NavigationAuth = () => {
 
 const NavigationNonAuth = () => {
   return (
-    <nav>
+    <nav className='navHeader'>
       <ul>
         <li className="App-link">
           <NavLink to='/'>Home</NavLink>

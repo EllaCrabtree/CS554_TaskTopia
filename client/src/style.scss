@@ -1,0 +1,100 @@
+@import '../node_modules/bootstrap/scss/bootstrap.scss';
+
+body{
+    background-color: white;
+}
+
+.navHeader{
+    padding: 50px;
+    background-color: #189AB4;
+    ul{
+        list-style-type: none;
+        li{
+            padding: 10px;
+            float: right;
+        }
+    }
+    a{
+        font-weight: bold;
+        text-decoration: none;
+        color:white; 
+        &:hover{
+            color: 	#05445E;
+        }
+    }
+}
+
+.homePage{
+    header h1 {
+        font-size: 70px;
+        font-weight: 600;
+        background-image: linear-gradient(to right, #C55FFC, #189AB4);
+        color: transparent;
+        background-clip: text;
+        -webkit-background-clip: text;
+      }
+
+    section{
+        background-color: #189AB4;
+        color: white;
+        padding: 20px;
+    }
+
+    footer{
+        background-color:#05445E ;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+        padding-left: 25%;
+        padding-right: 25%;
+        p{
+            padding: 10px;
+        }
+    }
+}
+
+.formDiv{
+    header h1 {
+        font-size: 70px;
+        font-weight: 600;
+        background-image: linear-gradient(to right, #C55FFC, #189AB4);
+        color: transparent;
+        background-clip: text;
+        -webkit-background-clip: text;
+      }
+
+    label{
+        font-weight: bold;
+        padding: 7px;
+    }
+
+    input{
+        border: 2px solid lightgray;
+        border-radius: 4px;
+        padding-left: 7px;
+        &:focus{
+            border:  2px solid #C55FFC;
+        }
+      }
+}
+
+.basicButton{
+    padding: 5px;
+    margin: 5px;
+    border: 3px solid  #189AB4;
+    background-color:  #189AB4;
+    font-weight: bold;
+    color:white;
+    border-radius:3px;
+    &:hover{
+        background-color:  #05445E;
+        border-color: #05445E;
+    }
+}
+
+p{
+    color: #05445E;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
