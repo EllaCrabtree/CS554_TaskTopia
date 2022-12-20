@@ -28,17 +28,19 @@ function Task(props) {
 
     async function completeTask() {
         try {
+            await axios.get(`http://localhost:4000/private/buildings/completeTask/${props.buildingId}`);
             await axios.delete(`http://localhost:4000/private/task/${props.buildingId}/${props.taskId}`);
-            props.xp = props.xp + 10;
+            
             setDeleteTask(true);
         } catch (e) {
+            console.log("oof");
             setErr(true);
             setErrData(e);
             console.log(e);
         }
     }
     return (<div>
-        {taskData && !deleteTask &&
+        {taskData && !deleteTask && !err &&
             <div className='taskContainer'>
                 {taskData.name && <h1>{taskData.name}</h1>}
                 {taskData.dateDue && <h2>{taskData.dateDue}</h2>}

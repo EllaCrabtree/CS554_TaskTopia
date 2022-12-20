@@ -84,6 +84,53 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
     return building;
 }
 
+async function completeTask(buildingId){
+    if (!buildingId) throw 'You must provide an id to search for';
+    if (typeof buildingId !== 'string') throw 'id must be a string';
+    buildingId = buildingId.trim();
+    if (buildingId.length === 0) throw 'id must not be empty';
+    if (!ObjectId.isValid(buildingId)) throw 'id must be a valid ObjectId';
+    const new_buildingId = buildingId.trim().toLowerCase();
+    const buildingCollection = await buildings();
+    const building = await buildingCollection.findOne({ _id: ObjectId(new_buildingId) });
+    if (building === null) throw 'No building with that id';
+    
+    let new_xpMax;
+    let new_level;
+    let new_xp = building.xp + 10;
+    if(new_xp >= building.xpMax){
+        new_xp = new_xp - building.xpMax;
+        new_xpMax = building.xpMax*2;
+        new_level = building.level + 1;
+        if(new_level > 3){
+            new_level = 3;
+            new_xp = building.xpMax;
+        }
+    } else {
+        new_xpMax = building.xpMax;
+        new_level = building.level;
+    }
+    const updatedBuilding = {
+        _id: building._id,
+        buildingCode: building.buildingCode,
+        xp: new_xp,
+        xpMax: new_xpMax,
+        level: new_level,
+        Avatar: building.Avatar,
+        Tasks: building.Tasks
+    };
+    const update = await buildingCollection.replaceOne(
+        { _id: ObjectId(new_buildingId) },
+        updatedBuilding
+    )
+
+    if (update.modifiedCount === 0) {
+        throw 'CompleteTask: Update failed';
+    }
+
+    return await this.getBuilding(new_buildingId);
+}
+
 async function getBuilding(id) {
     if (!id) throw 'You must provide an id to search for';
     if (typeof id !== 'string') throw 'id must be a string';
@@ -220,5 +267,6 @@ module.exports = {
     updateBuilding,
     deleteBuilding,
     getAllBuildings,
-    getUserBuildings
+    getUserBuildings,
+    completeTask
 };

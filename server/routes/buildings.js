@@ -14,6 +14,19 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/completeTask/:id', async (req, res) => {
+    if (!req.params.id) return res.status(400).json({ error: 'Must supply building id' });
+    console.log('hey');
+    try {
+        const updateBuilding = await buildingData.completeTask(req.params.id);
+        console.log('check');
+        return res.json(updateBuilding);
+    } catch (e) {
+        
+        return res.status(404).json({ error: 'Building not found' });
+    }
+});
+
 router.get('/:id', async (req, res) => {
     if (!req.params.id) return res.status(400).json({ error: 'Must supply building id' });
 
@@ -24,6 +37,8 @@ router.get('/:id', async (req, res) => {
         return res.status(404).json({ error: 'Building not found' });
     }
 });
+
+
 
 router.post('/', async (req, res) => {
     const building = req.body;
