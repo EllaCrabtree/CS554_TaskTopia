@@ -32,7 +32,7 @@ function UsersBuildings() {
             }
         }
         fetchData()
-    }, []);
+    },[]);
 
 
     const getBuildingForm = () => {
