@@ -63,6 +63,10 @@ body{
         -webkit-background-clip: text;
       }
 
+    h2{
+        color: #05445E;
+    }
+
     label{
         font-weight: bold;
         padding: 7px;
@@ -92,7 +96,20 @@ body{
     }
 }
 
-p{
+.signOutButton{
+    background-color: white;
+    border: 3px solid #05445E;
+    font-weight: bold;
+    color:#05445E;
+    border-radius:3px;
+    &:hover{
+        background-color:  #05445E;
+        border-color: #05445E;
+        color: white;
+    }
+}
+
+.randomText{
     color: #05445E;
     font-weight: bold;
     margin-top: 5px;

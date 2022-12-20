@@ -18,7 +18,7 @@ const SocialSignIn = () => {
         height='50px'
         width='50px'
       />
-      <p>Sign in With Google</p>
+      <p className="randomText">Sign in With Google</p>
     </div>
   );
 };

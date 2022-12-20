@@ -82,7 +82,7 @@ function ChangePassword() {
             </label>
           </div>
 
-          <button type='submit'>Change Password</button>
+          <button className="basicButton" type='submit'>Change Password</button>
         </form>
         <br />
       </div>
