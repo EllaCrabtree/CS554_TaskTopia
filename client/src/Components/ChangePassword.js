@@ -5,11 +5,14 @@ import {doChangePassword} from '../firebase/FirebaseFunctions';
 function ChangePassword() {
   const {currentUser} = useContext(AuthContext);
   const [pwMatch, setPwMatch] = useState('');
+  console.log(currentUser);
 
   const submitForm = async (event) => {
     event.preventDefault();
     const {currentPassword, newPasswordOne, newPasswordTwo} =
       event.target.elements;
+
+    console.log(currentPassword);
 
     if (newPasswordOne.value !== newPasswordTwo.value) {
       setPwMatch('New Passwords do not match, please try again');
@@ -19,7 +22,6 @@ function ChangePassword() {
     try {
       let result = await doChangePassword(
         currentUser.email,
-        currentPassword.value,
         newPasswordOne.value
       );
 

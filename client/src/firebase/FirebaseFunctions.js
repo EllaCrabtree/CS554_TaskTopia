@@ -23,8 +23,8 @@ async function doCreateUserWithEmailandPassword(email, password){
     }
 }
 
-async function doChangePassword(email, currentPassword, newPassword){
-    const user = authFirebase.currentUser;    
+async function doChangePassword(email, newPassword){
+    const user = authFirebase.currentUser;
     let success = null;
     let errorMessage = null;
 
