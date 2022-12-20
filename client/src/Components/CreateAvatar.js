@@ -87,6 +87,7 @@ function CreateAvatar(props) {
                     console.log(data);
 
                     setImageData(data.image);
+                    console.log(data.image);
                     callBackFunc(data.welcome, data.completion, data.overdue)
                 } else {
                     setCreated(false);
@@ -106,12 +107,12 @@ function CreateAvatar(props) {
 
             let {avatarID, callBackFunc, buildingId} = props;
 
-            console.log(avatarID)
+            // console.log(avatarID)
             // console.log(buildingId);
 
             //Note: the header is necessary to pass the form data, including the image, to the backend
             //Otherwise, Axios may throw a 413 due to the file size
-            console.log('This is the form data being passed')
+            // console.log('This is the form data being passed')
             
             let newFormData = {
                 name: nameData,
@@ -122,10 +123,13 @@ function CreateAvatar(props) {
                 buildingID: buildingId
             }
 
-            console.log(newFormData)
+            console.log(newFormData.img);
+
+            // console.log(newFormData)
             const { data } = await axios.post(`http://localhost:4000/avatar/`, newFormData, {headers: {"content-type": "multipart/form-data"}});
 
             setImageData(data.image);
+            console.log(data.image);
             callBackFunc(welcomeList, niceList, meanList)
 
             // cb_setImage(data.image);
@@ -154,25 +158,6 @@ function CreateAvatar(props) {
             console.log(e);
         }
     }
-
-    // const welcomeTextBox = <input 
-    // // onChange={(e) => handleWelcomeListChange(e)}
-    // type='text'
-    // id='welcomeList'
-    // name='welcomeList'> 
-    // </input>
-
-//     const niceTextBox = <input 
-//     type='text'
-//     id='niceList'
-//     name='niceList'> 
-// </input>
-
-//     const meanTextBox = <input 
-//     type='text'
-//     id='meanList'
-//     name='meanList'> 
-// </input>
 
 let meanTextBox, niceTextBox, welcomeTextBox;
 
@@ -367,7 +352,7 @@ let meanTextBox, niceTextBox, welcomeTextBox;
                         </label> */}
                     </div>
                     <button onClick={CreateAvatar}>Create Avatar</button>
-                    <button onClick={GetAvatar}>Get Avatar</button>
+                    {/* <button onClick={GetAvatar}>Get Avatar</button> */}
                 </div>
             </div>}
             
