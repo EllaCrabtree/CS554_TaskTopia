@@ -1,12 +1,8 @@
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
 
-body{
-    background-color: white;
-}
-
 .navHeader{
     padding: 50px;
-    background-color: #189AB4;
+    background-color: #077186;
     ul{
         list-style-type: none;
         li{
@@ -19,7 +15,7 @@ body{
         text-decoration: none;
         color:white; 
         &:hover{
-            color: 	#05445E;
+            color: 	#D4F1F4;
         }
     }
 }
@@ -28,20 +24,17 @@ body{
     header h1 {
         font-size: 70px;
         font-weight: 600;
-        background-image: linear-gradient(to right, #C55FFC, #189AB4);
-        color: transparent;
-        background-clip: text;
-        -webkit-background-clip: text;
+        color:#b134f5;
       }
 
     section{
-        background-color: #189AB4;
+        background-color: #077186;
         color: white;
         padding: 20px;
     }
 
     footer{
-        background-color:#05445E ;
+        background-color:#b134f5 ;
         color: white;
         font-weight: bold;
         border-radius: 10px;
@@ -57,10 +50,7 @@ body{
     header h1 {
         font-size: 70px;
         font-weight: 600;
-        background-image: linear-gradient(to right, #C55FFC, #189AB4);
-        color: transparent;
-        background-clip: text;
-        -webkit-background-clip: text;
+        color:#b134f5;
       }
 
     h2{
@@ -85,8 +75,8 @@ body{
 .basicButton{
     padding: 5px;
     margin: 5px;
-    border: 3px solid  #189AB4;
-    background-color:  #189AB4;
+    border: 3px solid  #077186;
+    background-color:  #077186;
     font-weight: bold;
     color:white;
     border-radius:3px;
