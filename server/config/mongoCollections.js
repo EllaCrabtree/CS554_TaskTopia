@@ -20,4 +20,5 @@ module.exports = {
   users: getCollectionFn('users'),
   buildings: getCollectionFn('buildings'),
   badges: getCollectionFn('badges'),
+  avatars: getCollectionFn('avatars')
 };

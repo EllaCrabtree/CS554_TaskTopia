@@ -56,9 +56,13 @@ router.post('/signup', async (req, res) => {
         return;
     }
 
+    if (!userInfo.uid) {
+        res.status(400).json({ error: 'You must provide a uid to create a user' });
+        return;
+    }
+
     try {
-        const newUser = await userData.createUser(userInfo.firstName, userInfo.lastName, userInfo.username, userInfo.password, userInfo.email);
-        console.log(newUser);
+        const newUser = await userData.createUser(userInfo.firstName, userInfo.lastName, userInfo.username, userInfo.password, userInfo.email, userInfo.uid);
     } catch (e) {
         res.status(500).json({ error: e });
     }

@@ -33,6 +33,15 @@
   border-style: inset;
 }
 
+#AvatarDiv {
+  display: flex;
+}
+
+#AvatarMessages {
+  align-items: center;
+  justify-content: center;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
