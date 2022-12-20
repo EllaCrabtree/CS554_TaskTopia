@@ -10,7 +10,7 @@ const badgeData = require('./badges');
 
 
 async function createUser(firstName, lastName, username, password, email) {
-    console.log("in create user");
+
     //-----------------------------------Check Arguments-----------------------------------
     if (arguments.length !== 5) {
         throw `Error: Insufficient number of arguments!`
@@ -68,8 +68,6 @@ async function createUser(firstName, lastName, username, password, email) {
 
 
     const new_email = email.trim();
-
-    console.log(new_email);
 
     const userCollection = await users(); //Initializing User Collection Variable
     const foundEmail = await userCollection.findOne({ email: new_email });
@@ -159,7 +157,7 @@ async function createUser(firstName, lastName, username, password, email) {
     if (insertInfo.insertedCount === 0) throw 'Could not add user';
 
     const newId = insertInfo.insertedId;
-    newUser = await getUserByUsername(new_username);
+    newUser = await getUserById(newId.toString());
     return newUser
 }
 
@@ -287,7 +285,6 @@ async function addBuildingToUser(username, building) {
     //check if username is within database
     const foundUser = await userCollection.findOne({ username: new_username });
 
-
     if (!foundUser) {
         throw 'Error: User not found!'
     }
@@ -395,7 +392,6 @@ async function updateLevel(username, newLevel) {
     //check if username is within database
     const userCollection = await users();
     const foundUser = await userCollection.findOne({ username: new_username });
-
     if (!foundUser) throw 'Error: User not found!'
 
     //-----------------------------------Check newLevel -----------------------------------
@@ -411,6 +407,78 @@ async function updateLevel(username, newLevel) {
     const updatedInfo = await userCollection.updateOne({ username: username }, { $set: { level: newLevel } });
     if (updatedInfo.modifiedCount === 0) {
         throw 'Could Not Update User Successfully';
+    }
+
+    return await this.getUserById(foundUser._id);
+}
+
+/**
+ * Updates the password of a user
+ * 
+ * @param {String} email 
+ * @param {String} password 
+ * @returns user with updated level
+ */
+ async function updatePassword(email, password) {
+
+    if (arguments.length != 2) throw 'Error: Invalid number of arguments!'
+
+    //-----------------------------------Check Email-----------------------------------
+
+    if (!email) throw 'Error: Username not supplied!'
+
+    if (typeof email !== 'string') {
+        throw 'Error: Email must be a string!'
+    }
+
+    if (email.trim().length === 0) {
+        throw 'Error: Email cannot be empty or only spaces!'
+    }
+
+    const new_email = email.trim();
+
+    const userCollection = await users(); //Initializing User Collection Variable
+    const foundEmail = await userCollection.findOne({ email: new_email });
+
+    if(!foundEmail){
+        throw 'Error: Email Not Found';
+    }
+
+    //-----------------------------------Check Password-----------------------------------
+
+    if (!password) {
+        throw 'Error: Password not supplied!'
+    }
+
+    if (typeof password !== 'string') {
+        throw 'Error: Password must be a string!'
+    }
+
+    if (password.trim().length === 0) {
+        throw 'Error: Password cannot be empty or only spaces!'
+    }
+
+    //Check Password Conditions - Decide Later
+
+    const new_password = password.trim();
+
+    if (new_password.length < 8) {
+        throw 'Error: Password must be 8 characters or longer!'
+    }
+
+    if (!(/[0-9]/.test(new_password))) {
+        throw 'Error: Password must contain at least one number!'
+    }
+
+    if (!(/[$@*%#=+]/.test(new_password))) {
+        throw 'Error: Password must contain at least one special character!'
+    }
+
+    const hash = await bcrypt.hash(new_password, 16);
+
+    const updatedInfo = await userCollection.updateOne({ email: new_email }, { $set: { password: hash } });
+    if (updatedInfo.modifiedCount === 0) {
+        throw 'Could Not Update User Password Successfully';
     }
 
     return await this.getUserById(foundUser._id);
@@ -599,5 +667,6 @@ module.exports = {
     updateLevel,
     addFriend,
     removeFriend,
-    deleteUser
+    deleteUser,
+    updatePassword
 }
