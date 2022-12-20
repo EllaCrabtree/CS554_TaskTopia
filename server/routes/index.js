@@ -10,7 +10,7 @@ const constructorMethod = (app) => {
     app.use('/private/users', userRoutes);
     app.use('/private/buildings', buildingRoutes);
     app.use('/badge', badgesRoutes);
-    app.use('/task', taskRoutes);
+    app.use('/private/task', taskRoutes);
     app.use('/avatar', avatarTestRoutes);
 
     app.use('*', (req, res) => {

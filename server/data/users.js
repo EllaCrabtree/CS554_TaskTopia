@@ -11,6 +11,7 @@ const badgeData = require('./badges');
 
 async function createUser(firstName, lastName, username, password, email) {
     console.log("in create user");
+    console.log("in create user");
     //-----------------------------------Check Arguments-----------------------------------
     if (arguments.length !== 5) {
         throw `Error: Insufficient number of arguments!`
@@ -68,6 +69,8 @@ async function createUser(firstName, lastName, username, password, email) {
 
 
     const new_email = email.trim();
+
+    console.log(new_email);
 
     console.log(new_email);
 
@@ -160,7 +163,7 @@ async function createUser(firstName, lastName, username, password, email) {
 
     const newId = insertInfo.insertedId;
     newUser = await getUserByUsername(new_username);
-    return newUser
+    return newUser;
 }
 
 async function checkUser(username, password) {

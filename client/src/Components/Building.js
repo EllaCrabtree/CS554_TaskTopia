@@ -14,11 +14,12 @@ function Building(props) {
     const [errData, setErrData] = useState(undefined);
 
     let { buildingId } = useParams();
-
+    if (!buildingId) {
+        buildingId = props.buildingId;
+    }
     useEffect(() => {
         async function fetchData() {
             try {
-                console.log(props.id)
                 const { data } = await axios.get(`http://localhost:4000/private/buildings/${buildingId}`);
                 setBuildingData(data);
             } catch (e) {
@@ -28,7 +29,7 @@ function Building(props) {
             }
         }
         fetchData()
-    }, [props.id]);
+    }, [buildingId, addBtnToggle]);
 
     return (<div>
         {buildingData &&
@@ -44,13 +45,13 @@ function Building(props) {
                 })}
                 {buildingData.Tasks && buildingData.Tasks.map(element => {
                     return (
-                        <Task buildingId={props.id} taskId={element._id} key={element._id} />)
+                        <Task buildingId={buildingId} taskId={element._id} key={element._id} />)
                 })}
                 {!addBtnToggle ? <button onClick={() => setBtnToggle(!addBtnToggle)} >Add New Tasks</button> : <button onClick={() => setBtnToggle(!addBtnToggle)} > Stop Adding New Tasks</button>}
                 <br />
                 <br />
                 <br />
-                {addBtnToggle && <AddTask buildingId={props.id} />}
+                {addBtnToggle && <AddTask buildingId={buildingId} />}
             </div>
         }
         {err && <Error error={errData} />}
