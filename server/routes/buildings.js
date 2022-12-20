@@ -60,7 +60,7 @@ router.post('/', async (req, res) => {
 
     try {
         const newBuilding = await buildingData.createBuilding(building.name, building.buildingCode, 0, building.xpMax, building.level, "odline");
-        res.json(newBuilding);
+        return res.json(newBuilding);
     } catch (e) {
         res.status(500).json({ error: e });
     }

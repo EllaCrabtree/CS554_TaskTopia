@@ -10,8 +10,11 @@ const Navigation = () => {
 
 const NavigationAuth = () => {
   return (
-    <nav>
+    <nav className='navHeader'>
       <ul>
+        <li>
+          <SignOutButton />
+        </li>
         <li className="App-link">
           <NavLink to='/'>Home</NavLink>
         </li>
@@ -21,9 +24,6 @@ const NavigationAuth = () => {
         <li className="App-link">
           <NavLink to='/buildings'>Buildings</NavLink>
         </li>
-        <li>
-          <SignOutButton />
-        </li>
       </ul>
     </nav>
   );
@@ -31,7 +31,7 @@ const NavigationAuth = () => {
 
 const NavigationNonAuth = () => {
   return (
-    <nav>
+    <nav className='navHeader'>
       <ul>
         <li className="App-link">
           <NavLink to='/'>Home</NavLink>

@@ -46,8 +46,11 @@ function Login(){
       return <Navigate to='/' />;
     }
     return (
-      <div>
-        <h1>Login</h1>
+      <div className="formDiv">
+        <header>
+          <h1>Login</h1>
+        </header>
+        
         <form onSubmit={handleLogin}>
           <div>
             <label>
@@ -73,9 +76,9 @@ function Login(){
               />
             </label>
           </div>
-          <button type='submit'>Login</button>
+          <button type='submit' className="basicButton">Login</button>
   
-          <button onClick={passwordReset}>
+          <button onClick={passwordReset} className="basicButton">
             Forgot Password
           </button>
         </form>

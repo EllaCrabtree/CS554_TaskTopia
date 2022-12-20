@@ -37,6 +37,10 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
     if (level < 0 || level > 3) throw 'level must be either 1, 2, or 3';
 
     //Check User
+    if (typeof user !== 'string') throw 'user must be a string';
+    user = user.trim();
+    user = user.toLowerCase();
+    if (user.length === 0) throw 'user must not be empty';
 
 
     const buildingCollection = await buildings();

@@ -5,8 +5,10 @@ import ChangePassword from './ChangePassword';
 function Account(){
 
     return(
-        <div>
-            <h2>Account Page</h2>
+        <div className="formDiv">
+            <header>
+                <h1>Account Page</h1>
+            </header>
             <ChangePassword />
             <SignOutButton />
         </div>

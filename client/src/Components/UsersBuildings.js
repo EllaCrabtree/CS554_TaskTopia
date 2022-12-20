@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 function UsersBuildings() {
     const [buildingData, setBuildingData] = useState(null);
-    const [addBuildingForm, setAddBuildingForm] = useState();
+    const [addBuildingForm, setAddBuildingForm] = useState(false);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
 
@@ -30,11 +30,11 @@ function UsersBuildings() {
             }
         }
         fetchData()
-    },[]);
+    },[addBuildingForm]);
 
 
     const getBuildingForm = () => {
-        setAddBuildingForm(true);
+        setAddBuildingForm(!addBuildingForm);
     }
 
     return (
@@ -49,12 +49,13 @@ function UsersBuildings() {
                         <Link className={element.code} to={`/buildings/${element.buildingID}`}> Type = {element.code} </Link>
                     </li>
                 )
-            })} </ul>
+            })} 
+            {addBuildingForm && <AddBuilding />}
+            </ul>
         }
         
         {err && <Error error={errData} />}
         <button onClick={getBuildingForm}>Create A New Building</button>
-        {addBuildingForm && <AddBuilding />}
     </div >)
 }
 

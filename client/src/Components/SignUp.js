@@ -62,8 +62,11 @@ function SignUp(){
     }
 
     return(
-        <div>
-            <h1>Sign Up</h1>
+        <div className="formDiv">
+            <header>
+                <h1>Sign Up</h1>
+            </header>
+
             {pwMatch && <h4>{pwMatch}</h4>}
             <form onSubmit={handleSignUp}>
                 <div>
@@ -135,7 +138,7 @@ function SignUp(){
                         />
                     </label>
                 </div>
-                <button id='submitButton' name='submitButton' type='submit'>
+                <button id='submitButton' name='submitButton' type='submit' className="basicButton">
                     Sign Up
                 </button>
             </form>
