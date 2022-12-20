@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
+/* eslint-disable react/react-in-jsx-scope */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Badge from './Badge';
@@ -28,6 +30,7 @@ function AllBadges() {
                 return (<Badge id={element._id} key={element._id}/>)
             })
             }
+            // eslint-disable-next-line react/react-in-jsx-scope
             {err && <Error error={errData} />}
         </div>)
 }
