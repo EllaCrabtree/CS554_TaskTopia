@@ -1,5 +1,6 @@
 import * as firebase from "firebase/auth";
 import { auth } from "./Firebase";
+//import axios from "axios";
 
 const authFirebase = auth;
 const googleProvider = new firebase.GoogleAuthProvider();
@@ -18,12 +19,7 @@ async function doCreateUserWithEmailandPassword(email, password) {
       errorMessage = error.message;
     });
 
-  if (user) {
-    return user;
-  }
-  if (errorCode) {
-    return { errorCode: errorCode, errorMessage: errorMessage };
-  }
+  return { user: user, errorCode: errorCode, errorMessage: errorMessage };
 }
 
 async function doChangePassword(email, newPassword) {
@@ -65,39 +61,48 @@ async function doSignInWithEmailAndPassword(email, password) {
       errorMessage = error.message;
     });
 
-  if (user) {
-    return user;
-  }
-  if (errorCode) {
-    return { errorCode: errorCode, errorMessage: errorMessage };
-  }
-}
-
-async function getCurrentUser() {
-  let user = authFirebase.currentUser;
-  if (user) {
-    return user;
-  } else {
-    return null;
-  }
+  return { user: user, errorCode: errorCode, errorMessage: errorMessage };
 }
 
 async function doGoogleSignIn() {
-  let credential = null,
-    user = null; //token = null;
+  let email = null;
   await firebase
     .signInWithPopup(authFirebase, googleProvider)
     .then((result) => {
-      credential = firebase.GoogleAuthProvider.credentialFromResult(result);
-      //token = credential.accessToken;
-      user = result.user;
+      let user = result.user;
+      email = user.email;
+      console.log("user email: " + email);
+      let credential = firebase.GoogleAuthProvider.credentialFromResult(result);
+      console.log(credential);
     })
     .catch((error) => {
-      credential = firebase.GoogleAuthProvider.credentialFromError(error);
+      let credential = firebase.GoogleAuthProvider.credentialFromError(error);
+      throw "Error: " + credential;
     });
 
-  return { user: user, credential: credential };
+  await doCreateUserWithEmailandPassword(email, "password").then();
+  //CreateUser("null", "null", user.email, "null", "null", userAdded.uid);
 }
+
+// async function CreateUser(firstName, lastName, username, password, email, uid) {
+//   try {
+//     await axios
+//       .post(`http://localhost:4000/signup/`, {
+//         firstName: firstName,
+//         lastName: lastName,
+//         username: username,
+//         password: password,
+//         email: email,
+//         uid: uid,
+//       })
+//       .then((result) => {
+//         let user = result.data;
+//         console.log(user);
+//       });
+//   } catch (e) {
+//     console.log(e);
+//   }
+// }
 
 async function doPasswordReset(email) {
   let success = null,
@@ -153,7 +158,6 @@ export {
   doCreateUserWithEmailandPassword,
   doChangePassword,
   doSignInWithEmailAndPassword,
-  getCurrentUser,
   doGoogleSignIn,
   doPasswordReset,
   deleteUser,
