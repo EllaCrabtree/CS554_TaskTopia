@@ -166,11 +166,22 @@ async function deleteBuilding(id) {
     if (id.length === 0) throw 'id must not be empty';
     if (!ObjectId.isValid(id)) throw 'id must be a valid ObjectId';
 
+    console.log('deleteBuilding DATA FUNCTION: ' + id);
     const buildingCollection = await buildings();
-    const deletionInfo = await buildingCollection.removeOne({ _id: ObjectId(id) });
-    if (deletionInfo.deletedCount === 0) {
+    const deletionInfoBuilding = await buildingCollection.findOneAndDelete({ _id: ObjectId(id) });
+    if (deletionInfoBuilding.deletedCount === 0) {
         throw `Could not delete building with id of ${id}`;
     }
+    const userCollection = await users();
+    const deletionInfoUser = await userCollection.updateOne( //Delete Building from User
+        { buildings: { $elemMatch: { buildingID: ObjectId(id) } } },
+        { $pull: { buildings: { buildingID: ObjectId(id) } } }
+    )
+    if (!deletionInfoUser.matchedCount && !deletionInfoUser.modifiedCount) {
+        throw 'DeleteBuilding: Update failed';
+    }
+
+    return true;
 }
 
 async function getAllBuildings() {
