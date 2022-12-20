@@ -1,16 +1,14 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react/react-in-jsx-scope */
-import { useState } from 'react';
+import React,{ useState } from 'react';
 import Task from './Task';
 import axios from 'axios';
 import Error from './Error';
 
 function AddTask(props) {
-    const [formData, setFormData] = useState({ buildingId: props.id });
+    const [formData, setFormData] = useState({ buildingId: props.buildingId });
     const [createdTask, setCreated] = useState(undefined);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
-
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
@@ -25,7 +23,6 @@ function AddTask(props) {
             console.log(e);
         }
     }
-    
     return (<div> {!createdTask && !err &&
         <div>
             <div className='add'>
@@ -46,20 +43,11 @@ function AddTask(props) {
                             name='dateDue'
                         />
                     </label>
-                    <label>
-                        Notes:
-                        <input
-                            onChange={(e) => handleChange(e)}
-                            id='notes'
-                            name='notes'
-                            placeholder='Notes...'
-                        />
-                    </label>
                 </div>
                 <button onClick={CreateTask}>Create Task</button>
             </div>
         </div>}
-        {createdTask && !err && <Task buildingId={props.id} taskId={createdTask._id} />}
+        {createdTask && !err && <Task buildingId={props.buildingId} taskId={createdTask._id} />}
         {err && <Error error={errData} />}
     </div>
     );

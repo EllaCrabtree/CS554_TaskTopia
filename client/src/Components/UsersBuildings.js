@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/react-in-jsx-scope */
 import { useState, useEffect } from 'react';
+=======
+import React,{ useState, useEffect } from 'react';
+>>>>>>> 1c6ed82021cd8aaabe0af9c94efcad86e6793ff8
 import axios from 'axios';
 // import Building from './Building';
 import Error from './Error';
@@ -34,6 +38,7 @@ function UsersBuildings() {
         fetchData()
     },[]);
 
+<<<<<<< HEAD
 
     const getBuildingForm = () => {
         setAddBuildingForm(true);
@@ -52,6 +57,13 @@ function UsersBuildings() {
                     </li>
                 )
             })} </ul>
+=======
+    return (<div>
+        {buildingData &&
+            buildingData.map(element => {
+                return <Building id={element} key={element}/>
+            })
+>>>>>>> 1c6ed82021cd8aaabe0af9c94efcad86e6793ff8
         }
         
         {err && <Error error={errData} />}

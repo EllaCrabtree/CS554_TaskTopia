@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react/react-in-jsx-scope */
-import { useState } from 'react';
+import React,{ useState } from 'react';
 import axios from 'axios';
 import Error from './Error';
 
 function AddNote(props) {
-    const [formData, setFormData] = useState({ buildingId: props.id });
+    const [formData, setFormData] = useState({ buildingId: props.buildingId , taskId: props.taskId});
     const [createdNote, setCreated] = useState(undefined);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
