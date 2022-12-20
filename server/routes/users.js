@@ -16,11 +16,11 @@ router.get('/buildings', async (req, res) => {
     }
 })
 
-router.get('/:username', async (req, res) => {
-    if (!req.params.username) return res.status(400).json({ error: 'You must provide a username.' });
+router.get('/uid/:uid', async (req, res) => {
+    if (!req.params.uid) return res.status(400).json({ error: 'You must provide a uid.' });
 
     try {
-        const val = await userData.getUserByUsername(req.params.username);
+        const val = await userData.getUserByUID(req.params.uid);
         return res.status(200).json(val);
     }
     catch (e) {

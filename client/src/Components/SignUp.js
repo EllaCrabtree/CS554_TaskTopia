@@ -2,14 +2,13 @@ import React, {useContext, useState} from 'react';
 import { Navigate } from 'react-router-dom';
 import {doCreateUserWithEmailandPassword} from '../firebase/FirebaseFunctions';
 import {AuthContext} from '../firebase/Auth';
-import SocialSignIn from './SocialSignIn';
 import axios from 'axios';
 
 function SignUp(){
     const {currentUser} = useContext(AuthContext);
     const [pwMatch, setPwMatch] = useState('');
 
-    async function CreateUser(firstName, lastName, username, password, email) {
+    async function CreateUser(firstName, lastName, username, password, email, uid) {
         let user = null;
         try {
             await axios.post(`http://localhost:4000/signup/`, {
@@ -17,7 +16,8 @@ function SignUp(){
                 lastName: lastName,
                 username: username, 
                 password: password,
-                email: email
+                email: email,
+                uid: uid
             })
             .then((result) => {
                 user = result.data;
@@ -44,7 +44,7 @@ function SignUp(){
         );
 
         if(!result.errorMessage){
-            let addedUser = await CreateUser(firstName.value, lastName.value, username.value, passwordOne.value, email.value);
+            let addedUser = await CreateUser(firstName.value, lastName.value, username.value, passwordOne.value, email.value, result.uid);
             if(!addedUser){
                 alert('Could not successfully upload user to database')
             }
@@ -143,7 +143,6 @@ function SignUp(){
                 </button>
             </form>
             <br />
-            <SocialSignIn />
         </div>
     );
 
