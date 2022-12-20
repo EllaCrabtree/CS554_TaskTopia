@@ -1,14 +1,14 @@
-import React, {useContext, useState} from 'react';
-import {AuthContext} from '../firebase/Auth';
-import {doChangePassword} from '../firebase/FirebaseFunctions';
+import React, { useContext, useState } from 'react';
+import { AuthContext } from '../firebase/Auth';
+import { doChangePassword } from '../firebase/FirebaseFunctions';
 
 function ChangePassword() {
-  const {currentUser} = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   const [pwMatch, setPwMatch] = useState('');
 
   const submitForm = async (event) => {
     event.preventDefault();
-    const {currentPassword, newPasswordOne, newPasswordTwo} =
+    const { currentPassword, newPasswordOne, newPasswordTwo } =
       event.target.elements;
 
     console.log(currentPassword);
@@ -24,9 +24,9 @@ function ChangePassword() {
         newPasswordOne.value
       );
 
-      if(result.errorMessage){
+      if (result.errorMessage) {
         alert(result.errorMessage);
-      }else{
+      } else {
         alert('Password has been changed, you will now be logged out');
       }
     } catch (error) {
@@ -53,7 +53,14 @@ function ChangePassword() {
               />
             </label>
           </div>
-
+          <div>
+            <p>Password must meet all of the following:</p>
+            <ul>
+              <li className='liNoDot'>Must be at least 8 characters</li>
+              <li className='liNoDot'>Must include a special character ($ @ * % # = +)</li>
+              <li className='liNoDot'>Must include a number</li>
+            </ul>
+          </div>
           <div className='form-group'>
             <label>
               New Password:

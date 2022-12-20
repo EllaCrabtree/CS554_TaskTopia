@@ -61,7 +61,7 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
     const userCollection = await users(); //Initializing User Collection Variable
 
     //check if username is within database
-    const foundUser = await userCollection.findOne({ username: user });
+    const foundUser = await userCollection.findOne({ email: user });
 
     if (!foundUser) {
         throw 'Error: User not found!'
