@@ -1,7 +1,6 @@
 import './App.css';
 import HomePage from './Components/HomePage';
 import Building from './Components/Building';
-import UserBuildings from './Components/UsersBuildings';
 import Badges from './Components/AllBadges';
 import Task from './Components/Task';
 import Login from './Components/Login';
@@ -28,7 +27,6 @@ function App() {
               <Route exact path='/' element={<HomePage />} />
               <Route element={<PrivateRoute />}>
                 <Route exact path='/task/:buildingId/:taskId' element={<Task />} />
-                <Route exact path='/buildings/' element={<UserBuildings />} />
                 <Route exact path='/buildings/:buildingId' element={<Building />} />
                 <Route path='/changepassword' element={<ChangePassword />} />
                 <Route path='/account' element={<Account />} />

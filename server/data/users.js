@@ -160,7 +160,7 @@ async function createUser(firstName, lastName, username, password, email) {
 
     const newId = insertInfo.insertedId;
     newUser = await getUserByUsername(new_username);
-    return newUser
+    return newUser;
 }
 
 async function checkUser(username, password) {

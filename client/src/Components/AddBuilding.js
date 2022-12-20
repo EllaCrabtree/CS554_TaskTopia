@@ -17,8 +17,6 @@ function AddBuilding() {
 
     async function CreateBuilding() {
         try {
-            // console.log(formData);
-            console.log('im not supposed to be here')
             const { data } = await axios.post(`http://localhost:4000/private/buildings/`, formData);
             setCreated(data);
         } catch (e) {
@@ -94,7 +92,7 @@ function AddBuilding() {
                     <button onClick={CreateBuilding}>Create Building</button>
                 </div>
             </div>}
-        {createdBuilding && !err && <Building id={createdBuilding._id} />}
+        {createdBuilding && !err && <Building buildingId={createdBuilding._id} />}
         {err && <Error error={errData} />}
     </div>
     );
