@@ -20,13 +20,13 @@ async function main() {
         const user2 = await usersData.createUser("Bella", "Cruz", "BellaTheBaddie", "TopSecret123$", "Baddie@gmail.com")
 
         //Create buildings
-        const bu1 = await buildingsData.createBuilding("EDUCATION", 20, 100, 2);
-        const bu2 = await buildingsData.createBuilding("ADMIN", 2, 30, 1);
-        const bu3 = await buildingsData.createBuilding("PARK", 8, 10, 3);
+        const bu1 = await buildingsData.createBuilding("Homework", "EDUCATION", 20, 100, 2, "Odline");
+        const bu2 = await buildingsData.createBuilding("Gaming Dubs", "ADMIN", 2, 30, 1, "Odline");
+        const bu3 = await buildingsData.createBuilding("Puuurrrr Queeen", "PARK", 8, 10, 3, "BellaTheBaddie");
 
-        await usersData.addBuildingToUser(user1.username, bu1._id);
-        await usersData.addBuildingToUser(user1.username, bu2._id);
-        await usersData.addBuildingToUser(user2.username, bu3._id);
+        // await usersData.addBuildingToUser(user1.username, bu1._id);
+        // await usersData.addBuildingToUser(user1.username, bu2._id);
+        // await usersData.addBuildingToUser(user2.username, bu3._id);
 
         // Populate all possible badges
         const b1 = await badgeData.populateBadges("ADMIN", [20, 25, 35]);
