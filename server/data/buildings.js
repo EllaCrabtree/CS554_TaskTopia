@@ -61,13 +61,13 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
     const userCollection = await users(); //Initializing User Collection Variable
 
     //check if username is within database
-    const foundUser = await userCollection.findOne({ username: user });
+    const foundUser = await userCollection.findOne({ email: user });
 
     if (!foundUser) {
         throw 'Error: User not found!'
     }
 
-    const userEntry = {buildingID: newId, name: name, code: buildingCode};
+    const userEntry = { buildingID: newId, name: name, code: buildingCode };
 
     const update = await userCollection.updateOne(
         { _id: ObjectId(foundUser._id) },
@@ -84,7 +84,7 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
     return building;
 }
 
-async function completeTask(buildingId){
+async function completeTask(buildingId) {
     if (!buildingId) throw 'You must provide an id to search for';
     if (typeof buildingId !== 'string') throw 'id must be a string';
     buildingId = buildingId.trim();
@@ -94,15 +94,15 @@ async function completeTask(buildingId){
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(new_buildingId) });
     if (building === null) throw 'No building with that id';
-    
+
     let new_xpMax;
     let new_level;
     let new_xp = building.xp + 10;
-    if(new_xp >= building.xpMax){
+    if (new_xp >= building.xpMax) {
         new_xp = new_xp - building.xpMax;
-        new_xpMax = building.xpMax*2;
+        new_xpMax = building.xpMax * 2;
         new_level = building.level + 1;
-        if(new_level > 3){
+        if (new_level > 3) {
             new_level = 3;
             new_xp = building.xpMax;
         }
@@ -228,30 +228,30 @@ async function deleteBuilding(id) {
         throw 'DeleteBuilding: Update failed';
     }
 
-    return true;
+    return id;
 }
 
 async function getAllBuildings() {
     const buildingCollection = await buildings();
-    try{
+    try {
         const buildings = await buildingCollection.find({}).toArray();
         return buildings;
     } catch (e) {
         console.log(e);
         throw e;
     }
-    
+
 }
 
-async function getUserBuildings(username) {
+async function getUserBuildings(email) {
     if (arguments.length != 1) throw 'Error: Invalid number of arguments for getUserBuildings!'
-    if (!username) throw 'Error: Username not supplied!'
-    if (typeof username !== 'string') throw 'Error: Username must be a string!'
-    if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
-    const new_username = username.trim().toLowerCase();
+    if (!email) throw 'Error: Username not supplied!'
+    if (typeof email !== 'string') throw 'Error: Username must be a string!'
+    if (email.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
+    email = email.trim().toLowerCase();
 
     const userCollection = await users();
-    const foundUser = await userCollection.findOne({ username: new_username });
+    const foundUser = await userCollection.findOne({ email: email });
 
     if (!foundUser) throw 'Error: User not found!';
 
@@ -265,13 +265,9 @@ async function addAvatarToBuilding(buildingId, avatarId) {
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
 
-    // const updatedBuilding = {
-        
-    // }
-
     const updatedInfo = await buildingCollection.updateOne(
         { _id: ObjectId(buildingId) },
-        { $set: {Avatar: avatarId} });
+        { $set: { Avatar: ObjectId(avatarId) } });
 
     if (building == null) throw 'Error: Building not found';
 

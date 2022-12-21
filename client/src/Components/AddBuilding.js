@@ -1,12 +1,14 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Error from './Error';
+import { AuthContext } from '../firebase/Auth';
 
 
 function AddBuilding() {
-    const [formData, setFormData] = useState({ buildingCode: 'ADMIN', level: 1 });
+    const { currentUser } = useContext(AuthContext);
+    const [formData, setFormData] = useState({ user: currentUser.email, buildingCode: 'ADMIN', level: 1 });
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
     const [createdBuildings, setCreatedBuildings] = useState([]);
@@ -55,48 +57,48 @@ function AddBuilding() {
 
     return (<div>
         {createdBuildings && !err && createdBuildings.map((building) => {
-        
             return (
-                <li key={building.key}>
+                <li className='liNoDot' key={building.key}>
                     <h3>{building.building.name}</h3>
                     <Link className={building.building.buildingCode} to={`/buildings/${building.building._id}`}> Type = {building.building.buildingCode} </Link>
                     <button onClick={() => setDeleteData(building.building)}>Delete Building</button>
                 </li>)
-        })},
+        })}
 
         {!err &&
-            <li key={"addBuildingForm"}>
-                <div>
-                    <div className='add'>
-                        <div className='input-selection'>
+            <ul>
+                <li className='liNoDot' key={"addBuildingForm"}>
+                    <div>
+                        <div className='add'>
+                            <div className='input-selection'>
 
-                            <label>
-                                Building Name:
-                                <input
-                                    onChange={(e) => handleChange(e)}
-                                    id='name'
-                                    name='name'
-                                    placeholder='Building Name...'>
-                                </input>
-                            </label>
+                                <label>
+                                    Building Name:
+                                    <input
+                                        onChange={(e) => handleChange(e)}
+                                        id='name'
+                                        name='name'
+                                        placeholder='Building Name...'>
+                                    </input>
+                                </label>
 
-                            <label>
-                                Building Type:
-                                <select
-                                    onChange={(e) => handleChange(e)}
-                                    id='buildingCode'
-                                    name='buildingCode'
-                                    defaultValue={'ADMIN'}
-                                >
-                                    <option value="ADMIN">ADMIN</option>
-                                    <option value="EDUCATION">EDUCATION</option>
-                                    <option value="GARDEN">GARDEN</option>
-                                    <option value="HOME">HOME</option>
-                                    <option value="PARK">PARK</option>
-                                    <option value="STORE">STORE</option>
-                                </select>
-                            </label>
-                            {/* <label>
+                                <label>
+                                    Building Type:
+                                    <select
+                                        onChange={(e) => handleChange(e)}
+                                        id='buildingCode'
+                                        name='buildingCode'
+                                        defaultValue={'ADMIN'}
+                                    >
+                                        <option value="ADMIN">ADMIN</option>
+                                        <option value="EDUCATION">EDUCATION</option>
+                                        <option value="GARDEN">GARDEN</option>
+                                        <option value="HOME">HOME</option>
+                                        <option value="PARK">PARK</option>
+                                        <option value="STORE">STORE</option>
+                                    </select>
+                                </label>
+                                {/* <label>
                             XP:
                             <input
                                 onChange={(e) => handleChange(e)}
@@ -105,34 +107,35 @@ function AddBuilding() {
                                 placeholder='XP...'
                             />
                         </label> */}
-                            <label>
-                                Max XP:
-                                <input
-                                    onChange={(e) => handleChange(e)}
-                                    id='xpMax'
-                                    name='xpMax'
-                                    type='number'
-                                    placeholder='Max XP...'
-                                />
-                            </label>
-                            <label>
-                                Level:
-                                <select
-                                    onChange={(e) => handleChange(e)}
-                                    id='level'
-                                    name='level'
-                                    defaultValue={1}
-                                >
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                </select>
-                            </label>
+                                <label>
+                                    Max XP:
+                                    <input
+                                        onChange={(e) => handleChange(e)}
+                                        id='xpMax'
+                                        name='xpMax'
+                                        type='number'
+                                        placeholder='Max XP...'
+                                    />
+                                </label>
+                                <label>
+                                    Level:
+                                    <select
+                                        onChange={(e) => handleChange(e)}
+                                        id='level'
+                                        name='level'
+                                        defaultValue={1}
+                                    >
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <button onClick={CreateBuilding}>Create Building</button>
                         </div>
-                        <button onClick={CreateBuilding}>Create Building</button>
                     </div>
-                </div>
-            </li>}
+                </li>
+            </ul>}
 
         {err && <Error error={errData} />}
 

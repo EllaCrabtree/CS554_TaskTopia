@@ -5,6 +5,7 @@ const data = require('../data');
 const buildingData = data.buildings;
 const { ObjectId } = require("mongodb");
 
+
 router.get('/', async (req, res) => {
     try {
         const buildings = await buildingData.getAllBuildings();
@@ -22,7 +23,7 @@ router.get('/completeTask/:id', async (req, res) => {
         console.log('check');
         return res.json(updateBuilding);
     } catch (e) {
-        
+
         return res.status(404).json({ error: 'Building not found' });
     }
 });
@@ -49,7 +50,7 @@ router.post('/', async (req, res) => {
     }
 
     if (!building.name) {
-        res.status(400).json({error: "You must provide a name for the building!"});
+        res.status(400).json({ error: "You must provide a name for the building!" });
         return;
     }
 
@@ -73,8 +74,13 @@ router.post('/', async (req, res) => {
         return;
     }
 
+    if (!building.user) {
+        res.status(400).json({ error: 'You must provide a user for the building' });
+        return;
+    }
+
     try {
-        const newBuilding = await buildingData.createBuilding(building.name, building.buildingCode, 0, building.xpMax, building.level, "odline");
+        const newBuilding = await buildingData.createBuilding(building.name, building.buildingCode, 0, building.xpMax, building.level, building.user);
         return res.json(newBuilding);
     } catch (e) {
         res.status(500).json({ error: e });
@@ -137,8 +143,8 @@ router.delete('/:id', async (req, res) => {
     if (!req.params.id) return res.status(400).json({ error: 'You must provide an id for the building to delete it.' });
     console.log("Delete building: " + req.params.id);
     try {
-        await buildingData.deleteBuilding(req.params.id);
-        res.sendStatus(200);
+        const deletedBuildingId = await buildingData.deleteBuilding(req.params.id);
+        res.send(deletedBuildingId);
     } catch (e) {
         res.status(404).json({ error: 'Building not found' });
     }

@@ -2,7 +2,6 @@ import * as firebase from "firebase/auth";
 import { auth } from "./Firebase";
 
 const authFirebase = auth;
-const googleProvider = new firebase.GoogleAuthProvider();
 
 async function doCreateUserWithEmailandPassword(email, password) {
   let user = null,
@@ -18,12 +17,7 @@ async function doCreateUserWithEmailandPassword(email, password) {
       errorMessage = error.message;
     });
 
-  if (user) {
-    return user;
-  }
-  if (errorCode) {
-    return { errorCode: errorCode, errorMessage: errorMessage };
-  }
+  return { user: user, errorCode: errorCode, errorMessage: errorMessage };
 }
 
 async function doChangePassword(email, newPassword) {
@@ -65,38 +59,7 @@ async function doSignInWithEmailAndPassword(email, password) {
       errorMessage = error.message;
     });
 
-  if (user) {
-    return user;
-  }
-  if (errorCode) {
-    return { errorCode: errorCode, errorMessage: errorMessage };
-  }
-}
-
-async function getCurrentUser() {
-  let user = authFirebase.currentUser;
-  if (user) {
-    return user;
-  } else {
-    return null;
-  }
-}
-
-async function doGoogleSignIn() {
-  let credential = null,
-    user = null; //token = null;
-  await firebase
-    .signInWithPopup(authFirebase, googleProvider)
-    .then((result) => {
-      credential = firebase.GoogleAuthProvider.credentialFromResult(result);
-      //token = credential.accessToken;
-      user = result.user;
-    })
-    .catch((error) => {
-      credential = firebase.GoogleAuthProvider.credentialFromError(error);
-    });
-
-  return { user: user, credential: credential };
+  return { user: user, errorCode: errorCode, errorMessage: errorMessage };
 }
 
 async function doPasswordReset(email) {
@@ -153,8 +116,6 @@ export {
   doCreateUserWithEmailandPassword,
   doChangePassword,
   doSignInWithEmailAndPassword,
-  getCurrentUser,
-  doGoogleSignIn,
   doPasswordReset,
   deleteUser,
   doSignOut,

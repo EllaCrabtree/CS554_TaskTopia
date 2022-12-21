@@ -5,6 +5,7 @@ import ChangePassword from "./ChangePassword";
 import axios from "axios";
 import { useContext } from "react";
 import { AuthContext } from "../firebase/Auth";
+import { Link } from 'react-router-dom';
 
 function Account() {
   const currentUser = useContext(AuthContext);
@@ -18,7 +19,7 @@ function Account() {
       try {
         const { data } = await axios.get(
           "http://localhost:4000/private/users/uid/" +
-            currentUser.currentUser.uid
+          currentUser.currentUser.uid
         );
         setUserInfo(data);
         setLoading(false);
@@ -65,7 +66,9 @@ function Account() {
           {buildings.length > 0 ? (
             <ul>
               {buildings.map((building) => (
-                <li key={building}>{building}</li>
+                <li key={building.buildingID}>
+                  <Link to={`/buildings/${building.buildingID}`}> {building.name} </Link>
+                </li>
               ))}
             </ul>
           ) : (
@@ -89,7 +92,7 @@ function Account() {
           <ChangePassword />
         </div>
         <SignOutButton />
-      </div>
+      </div >
     );
   }
 }
