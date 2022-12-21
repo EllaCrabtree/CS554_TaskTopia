@@ -180,18 +180,24 @@ async function getUsersBadges(userName) {
     if (typeof userName != 'string') throw `Id must be a string.`;
     userName = String.prototype.trim.call(userName).toLowerCase();
 
-    const allBadges = await getAllBadges();
+    try {
+        const allBadges = await getAllBadges();
+        let usersBadges = [];
 
-    let usersBadges = [];
-
-    for (let i = 0; i < allBadges.length; i++) {
-        let val = await checkIfUserGetsBadge(userName, allBadges[i]._id.toString());
-        if (val) {
-            usersBadges.push(allBadges[i]);
+        for (let i = 0; i < allBadges.length; i++) {
+            try {
+                let val = await checkIfUserGetsBadge(userName, allBadges[i]._id.toString());
+                if (val) {
+                    usersBadges.push(allBadges[i]);
+                }
+            } catch (e) {
+                throw e
+            }
         }
+        return usersBadges;
+    } catch (e) {
+        throw e;
     }
-
-    return usersBadges;
 }
 
 async function giveUserAllBadges(userName) {
@@ -200,17 +206,24 @@ async function giveUserAllBadges(userName) {
     if (typeof userName != 'string') throw `Id must be a string.`;
     userName = String.prototype.trim.call(userName).toLowerCase();
 
-    const badgeArray = await getUsersBadges(userName);
+    const userCollection = await users();
+    const foundUser = await userCollection.findOne({ username: userName });
+    const updatedInfo = await userCollection.updateOne({ username: userName }, { $set: { awards: [] } });
 
-    for (let i = 0; i < badgeArray.length; i++) {
-        try {
-            const val = await addAwardToUser(userName, badgeArray[i]._id.toString());
+    try {
+        const badgeArray = await getUsersBadges(userName);
+        for (let i = 0; i < badgeArray.length; i++) {
+            try {
+                const val = await addAwardToUser(userName, badgeArray[i]._id.toString());
+            }
+            catch (e) {
+                throw e
+            }
         }
-        catch (e) {
-            throw e
-        }
+        return { 'message': "all badges added" }
+    } catch (e) {
+        throw e;
     }
-    return { 'message': "all badges added" }
 }
 
 
@@ -274,7 +287,7 @@ async function checkIfUserGetsBadge(userName, badgeId) {
     if (!foundBadge) throw 'Error: Badge not found!';
 
     for (let i = 0; i < foundUser.buildings.length; i++) {
-        let building = await buildingCollection.findOne({ _id: ObjectId(foundUser.buildings[i]) });
+        let building = await buildingCollection.findOne({ _id: ObjectId(foundUser.buildings[i].buildingID) });
         if (!building) throw 'Error: Building not found!';
         if (building.buildingCode === foundBadge.building && building.xp >= foundBadge.ptsNeeded) {
             return true;

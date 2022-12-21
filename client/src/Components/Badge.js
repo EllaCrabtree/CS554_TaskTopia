@@ -26,7 +26,7 @@ function Badge(props) {
     return (<div>
         {badgeData &&
             <div className='badgeContainer'>
-                {badgeData.type && badgeData.building && < img height={300} width={300} className='badgeIcon' alt={`${badgeData.type} level badge for ${badgeData.building} building`} src={require(`../icons/Badges/${badgeData.building}_${badgeData.type}.png`)} />}
+                {badgeData.type && badgeData.building && < img height={120} width={120} className='badgeIcon' alt={`${badgeData.type} level badge for ${badgeData.building} building`} src={require(`../icons/Badges/${badgeData.building}_${badgeData.type}.png`)} />}
                 {badgeData.description && <p className='badgeDescription'>{badgeData.description}</p>}
             </div>
         }

@@ -243,15 +243,15 @@ async function getAllBuildings() {
 
 }
 
-async function getUserBuildings(username) {
+async function getUserBuildings(email) {
     if (arguments.length != 1) throw 'Error: Invalid number of arguments for getUserBuildings!'
-    if (!username) throw 'Error: Username not supplied!'
-    if (typeof username !== 'string') throw 'Error: Username must be a string!'
-    if (username.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
-    const new_username = username.trim().toLowerCase();
+    if (!email) throw 'Error: Username not supplied!'
+    if (typeof email !== 'string') throw 'Error: Username must be a string!'
+    if (email.trim().length === 0) throw 'Error: Username cannot be empty or only spaces!'
+    email = email.trim().toLowerCase();
 
     const userCollection = await users();
-    const foundUser = await userCollection.findOne({ username: new_username });
+    const foundUser = await userCollection.findOne({ email: email });
 
     if (!foundUser) throw 'Error: User not found!';
 
@@ -267,7 +267,7 @@ async function addAvatarToBuilding(buildingId, avatarId) {
 
     const updatedInfo = await buildingCollection.updateOne(
         { _id: ObjectId(buildingId) },
-        { $set: {Avatar: ObjectId(avatarId)} });
+        { $set: { Avatar: ObjectId(avatarId) } });
 
     if (building == null) throw 'Error: Building not found';
 
