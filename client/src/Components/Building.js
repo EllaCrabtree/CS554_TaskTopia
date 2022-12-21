@@ -37,8 +37,22 @@ function Building(props) {
                 const { data } = await axios.get(`http://localhost:4000/private/buildings/${buildingId}`);
                 setBuildingData(data);
 
-                setWelcome(true);
+                
                 // console.log(data.Avatar)
+
+                const overdueTasks = buildingData.Tasks.filter(elem => {
+                    elem.isOverdue == true;
+                })
+
+                // console.log(overdueTasks.length)
+
+                if (overdueTasks.length === 0) {
+                    setWelcome(true)
+                    setTaskOverdue(false)
+                } else {
+                    setWelcome(false)
+                    setTaskOverdue(true)
+                }
                 
             } catch (e) {
                 setErr(true);
@@ -55,6 +69,8 @@ function Building(props) {
                 console.log(props.id)
                 const { data } = await axios.get(`http://localhost:4000/private/buildings/${buildingId}`);
                 setBuildingData(data);
+
+                setTaskCreated(false);
             } catch (e) {
                 setErr(true);
                 setErrData(e);
@@ -78,8 +94,25 @@ function Building(props) {
         console.log(welcome);
     }
 
+    const addTaskCallback = (newTask) => {
+        console.log(newTask)
+        let newBuildingData = {...buildingData}
+        newBuildingData.Tasks = [...newBuildingData.Tasks, newTask]
+        setBuildingData(newBuildingData)
+    }
+
     const getWelcomeMessage = () => {
-        return welcomeList[0];
+        console.log('hello')
+        console.log(welcomeList[Math.random() * welcomeList.length])
+        return welcomeList[Math.random() * welcomeList.length];
+    }
+
+    const getNiceMessage = () => {
+        return niceList[Math.random() * niceList.length];
+    }
+
+    const getMeanMessage = () => {
+        return meanList[Math.random() * meanList.length];
     }
 
     // function avatarCallback(id) {
@@ -99,8 +132,8 @@ function Building(props) {
                     <CreateAvatar buildingId={buildingId} avatarID={buildingData.Avatar} callBackFunc={getMessages}/>
                     <div id='AvatarMessages'>
                         {welcome && <p>{getWelcomeMessage()}</p>}
-                        {taskOverdue && <p>{}</p>}
-                        {taskComplete && <p>{}</p>}
+                        {taskOverdue && <p>{getMeanMessage()}</p>}
+                        {taskComplete && <p>{getNiceMessage()}</p>}
                     </div>
                 </div>
                 
@@ -128,7 +161,7 @@ function Building(props) {
                 <br />
                 <br />
                 <br />
-                {addBtnToggle && <AddTask buildingId={buildingData._id} />}
+                {addBtnToggle && <AddTask buildingId={buildingData._id} callback={addTaskCallback} />}
             </div>
         }
 

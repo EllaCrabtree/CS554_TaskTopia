@@ -265,19 +265,9 @@ async function addAvatarToBuilding(buildingId, avatarId) {
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
 
-<<<<<<< HEAD
     const updatedInfo = await buildingCollection.updateOne(
         { _id: ObjectId(buildingId) },
         { $set: {Avatar: ObjectId(avatarId)} });
-=======
-    // const updatedBuilding = {
-
-    // }
-
-    const updatedInfo = await buildingCollection.updateOne(
-        { _id: ObjectId(buildingId) },
-        { $set: { Avatar: avatarId } });
->>>>>>> ac5c87c135283e2b30c66cd731a2448bed58a3fe
 
     if (building == null) throw 'Error: Building not found';
 
