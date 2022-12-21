@@ -15,7 +15,15 @@ function AddNote(props) {
 
     async function AddNotes() {
         try {
-            const { data } = await axios.post(`http://localhost:4000/private/task/addNotes`, formData);
+            console.log(props.buildingId);
+            let newFormData = {
+                notes: formData.notes,
+                buildingId: props.buildingId,
+                taskId: props.taskId
+            }
+
+            const { data } = await axios.post(`http://localhost:4000/private/task/addNotes`, newFormData);
+            props.callback(data);
             setCreated(data);
         } catch (e) {
             setErr(true);

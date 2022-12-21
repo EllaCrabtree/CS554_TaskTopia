@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React,{ useState, useEffect } from 'react';
 import axios from 'axios';
@@ -12,24 +13,32 @@ function Task(props) {
     const [deleteTask, setDeleteTask] = useState(null);
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const { data } = await axios.get(`http://localhost:4000/private/task/${props.buildingId}/${props.taskId}`);
-                setTaskData(data);
-            } catch (e) {
-                setErr(true);
-                setErrData(e);
-                console.log(e);
-            }
-        }
+        setTaskData(props.taskData);
+    }, [])
+
+    // useEffect(() => {
+    //     async function fetchData() {
+    //         try {
+    //             const { data } = await axios.get(`http://localhost:4000/private/task/${props.buildingId}/${props.taskId}`);
+    //             setTaskData(data);
+    //         } catch (e) {
+    //             setErr(true);
+    //             setErrData(e);
+    //             console.log(e);
+    //         }
+    //     }
         
-        fetchData()
-    }, [props.buildingId, props.taskId, addBtnToggle]);
+    //     fetchData()
+    // }, [props.buildingId, props.taskId, addBtnToggle]);
+
+    async function addNotesCallback(newData) {
+        setTaskData(newData);
+    }
 
     async function completeTask() {
         try {
             await axios.get(`http://localhost:4000/private/buildings/completeTask/${props.buildingId}`);
-            await axios.delete(`http://localhost:4000/private/task/${props.buildingId}/${props.taskId}`);
+            await axios.delete(`http://localhost:4000/private/task/${props.buildingId}/${props.taskData._id.toString()}`);
             
             setDeleteTask(true);
         } catch (e) {
@@ -56,7 +65,7 @@ function Task(props) {
                 <br />
                 <button onClick={completeTask}>Complete Task</button>
                 <br />
-                {addBtnToggle && <AddNote buildingId={props.buildingId} taskId={props.taskId} />}
+                {addBtnToggle && <AddNote buildingId={props.buildingId} taskId={props.taskData._id.toString()} callback={addNotesCallback} />}
             </div>}
         {err && <Error error={errData} />}
     </div>

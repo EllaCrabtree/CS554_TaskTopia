@@ -23,7 +23,7 @@ function AddTask(props) {
             console.log(e);
         }
     }
-    return (<div> {!createdTask && !err &&
+    return (<div> {!err &&
         <div>
             <div className='add'>
                 <div className='input-selection'>

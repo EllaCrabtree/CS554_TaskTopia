@@ -73,7 +73,7 @@ router.delete('/:avatarID', async (req, res) => {
             res.status(400).json({error: "Avatar ID must be a nonempty string!"})
         }
     
-        if (!ObjectId.isValid(avatarID.trim())) {
+        if (!ObjectId.isValid(avatarID)) {
             res.status(400).json({error: "Avatar ID is not a valid Object ID"})
         }
 
@@ -115,9 +115,9 @@ router.post('/', async (req, res) => {
         res.status(400).json({error: "Avatar image cannot be the empty string or just spaces!"})
     }
 
-    if (Buffer.from(img, 'base64').toString('base64') !== img) {
-        res.status(400).json({error: "Avatar image must be a valid base64 encoded string!"})
-    }
+    // if (Buffer.from(img, 'base64').toString('base64') !== img) {
+    //     res.status(400).json({error: "Avatar image must be a valid base64 encoded string!"})
+    // }
 
     if (!welcomeList) {
         res.status(400).json({error: "You must provide a list of welcome strings"})

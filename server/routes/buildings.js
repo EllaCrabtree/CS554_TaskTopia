@@ -5,6 +5,7 @@ const data = require('../data');
 const buildingData = data.buildings;
 const { ObjectId } = require("mongodb");
 
+
 router.get('/', async (req, res) => {
     try {
         const buildings = await buildingData.getAllBuildings();
@@ -137,8 +138,8 @@ router.delete('/:id', async (req, res) => {
     if (!req.params.id) return res.status(400).json({ error: 'You must provide an id for the building to delete it.' });
     console.log("Delete building: " + req.params.id);
     try {
-        await buildingData.deleteBuilding(req.params.id);
-        res.sendStatus(200);
+        const deletedBuildingId = await buildingData.deleteBuilding(req.params.id);
+        res.send(deletedBuildingId);
     } catch (e) {
         res.status(404).json({ error: 'Building not found' });
     }

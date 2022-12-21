@@ -12,7 +12,7 @@ async function createTask(buildingId, name, dateDue) {
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
     if (buildingId.length === 0) throw 'buildingId must not be empty';
-    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+    // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
 
     if (typeof name !== 'string') throw 'name must be a string';
     name = name.trim();
@@ -50,7 +50,7 @@ async function getTask(buildingId, taskId) {
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
     if (buildingId.length === 0) throw 'buildingId must not be empty';
-    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+    // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
 
     if (!taskId) throw 'You must provide a taskId to search for';
     if (typeof taskId !== 'string') throw 'taskId must be a string';
@@ -66,7 +66,7 @@ async function getAllTasks(buildingId) {
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
     if (buildingId.length === 0) throw 'buildingId must not be empty';
-    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+    // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
 
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
@@ -80,7 +80,7 @@ async function updateTask(buildingId, taskId, updatedTask) {
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
     if (buildingId.length === 0) throw 'buildingId must not be empty';
-    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+    // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
 
     if (!taskId) throw 'You must provide a taskId to search for';
     if (typeof taskId !== 'string') throw 'taskId must be a string';
@@ -160,7 +160,7 @@ async function removeTask(buildingId, taskId) {
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
     if (buildingId.length === 0) throw 'buildingId must not be empty';
-    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+    // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
 
     if (!taskId) throw 'You must provide a taskId to search for';
     if (typeof taskId !== 'string') throw 'taskId must be a string';
@@ -186,7 +186,7 @@ async function checkIfTaskOverdue(buildingId, taskId) {
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
     if (buildingId.length === 0) throw 'buildingId must not be empty';
-    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+    // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
 
     if (!taskId) throw 'You must provide a taskId to search for';
     if (typeof taskId !== 'string') throw 'taskId must be a string';
@@ -221,7 +221,7 @@ async function addNotestoTask(buildingId, taskId, note) {
     if (typeof buildingId !== 'string') throw 'buildingId must be a string';
     buildingId = buildingId.trim();
     if (buildingId.length === 0) throw 'buildingId must not be empty';
-    if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
+    // if (!ObjectId.isValid(buildingId)) throw 'buildingId must be a valid ObjectId';
 
     if (!taskId) throw 'You must provide a taskId to search for';
     if (typeof taskId !== 'string') throw 'taskId must be a string';

@@ -228,7 +228,7 @@ async function deleteBuilding(id) {
         throw 'DeleteBuilding: Update failed';
     }
 
-    return true;
+    return id;
 }
 
 async function getAllBuildings() {
@@ -265,13 +265,9 @@ async function addAvatarToBuilding(buildingId, avatarId) {
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
 
-    // const updatedBuilding = {
-        
-    // }
-
     const updatedInfo = await buildingCollection.updateOne(
         { _id: ObjectId(buildingId) },
-        { $set: {Avatar: avatarId} });
+        { $set: {Avatar: ObjectId(avatarId)} });
 
     if (building == null) throw 'Error: Building not found';
 
@@ -286,9 +282,6 @@ module.exports = {
     deleteBuilding,
     getAllBuildings,
     getUserBuildings,
-<<<<<<< HEAD
-    completeTask
-=======
+    completeTask,
     addAvatarToBuilding
->>>>>>> b7f05cac2a7bb59a0e87329c2a8b0076aa93001c
 };

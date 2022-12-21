@@ -5,9 +5,12 @@ const data = require('../data');
 const userData = data.users;
 const buildingData = data.buildings;
 
-router.get('/buildings', async (req, res) => {
+router.get('/buildings/:username', async (req, res) => {
+
+    const username = req.params.username
+
     try {
-        const val = await buildingData.getUserBuildings("odline");
+        const val = await buildingData.getUserBuildings(username);
         console.log(val);
         return res.status(200).json(val);
     }
