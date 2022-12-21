@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 // import Building from './Building';
 import Error from './Error';
 import AddBuilding from './AddBuilding';
 import { Link } from 'react-router-dom';
-// import { AuthContext } from "../firebase/Auth";
+import { AuthContext } from "../firebase/Auth";
 
 
 
 function UsersBuildings() {
-    // const currentUser = useContext(AuthContext);
+    const { currentUser } = useContext(AuthContext);
 
     const [buildingData, setBuildingData] = useState(null);
     const [addBuildingForm, setAddBuildingForm] = useState(false);
@@ -27,9 +27,7 @@ function UsersBuildings() {
         async function fetchData() {
             try {
                 // const { user } = await axios.get(`http://localhost:4000/private/users/uid/${currentUser.currentUser.uid}`)
-                const { data } = await axios.get(`http://localhost:4000/private/users/buildings/odline`)
-                console.log(data);
-
+                const { data } = await axios.get(`http://localhost:4000/private/users/buildings/${currentUser.email}`)
                 if (data.length == 0) {
                     setBuildingData(false)
                 } else {
