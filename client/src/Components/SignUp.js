@@ -1,11 +1,11 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import {doCreateUserWithEmailandPassword} from '../firebase/FirebaseFunctions';
-import {AuthContext} from '../firebase/Auth';
+import { doCreateUserWithEmailandPassword } from '../firebase/FirebaseFunctions';
+import { AuthContext } from '../firebase/Auth';
 import axios from 'axios';
 
-function SignUp(){
-    const {currentUser} = useContext(AuthContext);
+function SignUp() {
+    const { currentUser } = useContext(AuthContext);
     const [pwMatch, setPwMatch] = useState('');
 
     async function CreateUser(firstName, lastName, username, password, email, uid) {
@@ -14,14 +14,14 @@ function SignUp(){
             await axios.post(`http://localhost:4000/signup/`, {
                 firstName: firstName,
                 lastName: lastName,
-                username: username, 
+                username: username,
                 password: password,
                 email: email,
                 uid: uid
             })
-            .then((result) => {
-                user = result.data;
-            })
+                .then((result) => {
+                    user = result.data;
+                })
         } catch (e) {
             console.log(e);
         }
@@ -30,38 +30,38 @@ function SignUp(){
     }
 
     const handleSignUp = async (e) => {
-      e.preventDefault();
-      const {firstName, lastName, username, email, passwordOne, passwordTwo} = e.target.elements;
-      if (passwordOne.value !== passwordTwo.value) {
-        setPwMatch('Passwords do not match');
-        return false;
-      }
-  
-      try {
-        let result = await doCreateUserWithEmailandPassword(
-          email.value,
-          passwordOne.value,
-        );
-
-        if(!result.errorMessage){
-            let addedUser = await CreateUser(firstName.value, lastName.value, username.value, passwordOne.value, email.value, result.uid);
-            if(!addedUser){
-                alert('Could not successfully upload user to database')
-            }
-        }else{
-            alert(result.errorMessage);
+        e.preventDefault();
+        const { firstName, lastName, username, email, passwordOne, passwordTwo } = e.target.elements;
+        if (passwordOne.value !== passwordTwo.value) {
+            setPwMatch('Passwords do not match');
+            return false;
         }
 
-      } catch (error) {
-        alert(error);
-      }
+        try {
+            let result = await doCreateUserWithEmailandPassword(
+                email.value,
+                passwordOne.value,
+            );
+
+            if (!result.errorMessage) {
+                let addedUser = await CreateUser(firstName.value, lastName.value, username.value, passwordOne.value, email.value, result.uid);
+                if (!addedUser) {
+                    alert('Could not successfully upload user to database')
+                }
+            } else {
+                alert(result.errorMessage);
+            }
+
+        } catch (error) {
+            alert(error);
+        }
     };
-  
+
     if (currentUser) {
-      return <Navigate to='/' />;
+        return <Navigate to='/' />;
     }
 
-    return(
+    return (
         <div className="formDiv">
             <header>
                 <h1>Sign Up</h1>
@@ -72,7 +72,7 @@ function SignUp(){
                 <div>
                     <label>
                         First Name:
-                        <input 
+                        <input
                             required
                             name='firstName'
                             type='text'
@@ -94,7 +94,7 @@ function SignUp(){
                 <div>
                     <label>
                         Email:
-                        <input 
+                        <input
                             required
                             name='email'
                             type='email'
@@ -105,13 +105,21 @@ function SignUp(){
                 <div>
                     <label>
                         Username:
-                        <input 
+                        <input
                             required
                             name='username'
                             type='text'
                             placeholder='Username'
                         />
                     </label>
+                </div>
+                <div>
+                    <p>Password must meet all of the following:</p>
+                    <ul>
+                        <li className='liNoDot'>Must be at least 8 characters</li>
+                        <li className='liNoDot'>Must include a special character ($ @ * % # = +)</li>
+                        <li className='liNoDot'>Must include a number</li>
+                    </ul>
                 </div>
                 <div>
                     <label>

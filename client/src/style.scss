@@ -1,123 +1,134 @@
 @import '../node_modules/bootstrap/scss/bootstrap.scss';
 
-.navHeader{
+.navHeader {
     padding: 50px;
     background-color: #077186;
-    ul{
+
+    ul {
         list-style-type: none;
-        li{
+
+        li {
             padding: 10px;
             float: right;
         }
     }
-    a{
+
+    a {
         font-weight: bold;
         text-decoration: none;
-        color:white; 
-        &:hover{
-            color: 	#D4F1F4;
+        color: white;
+
+        &:hover {
+            color: #D4F1F4;
         }
     }
 }
 
-.homePage{
+.homePage {
     header h1 {
         font-size: 70px;
         font-weight: 600;
-        color:#b134f5;
-      }
+        color: #b134f5;
+    }
 
-    section{
+    section {
         background-color: #077186;
         color: white;
         padding: 20px;
     }
 
-    footer{
-        background-color:#b134f5 ;
+    footer {
+        background-color: #b134f5;
         color: white;
         font-weight: bold;
         border-radius: 10px;
         padding-left: 25%;
         padding-right: 25%;
-        p{
+
+        p {
             padding: 10px;
         }
     }
 }
 
-.formDiv{
+.formDiv {
     header h1 {
         font-size: 70px;
         font-weight: 600;
-        color:#b134f5;
-      }
+        color: #b134f5;
+    }
 
-    h2{
+    h2 {
         color: #05445E;
     }
 
-    label{
+    label {
         font-weight: bold;
         padding: 7px;
     }
 
-    input{
+    input {
         border: 2px solid lightgray;
         border-radius: 4px;
         padding-left: 7px;
-        &:focus{
-            border:  2px solid #C55FFC;
+
+        &:focus {
+            border: 2px solid #C55FFC;
         }
-      }
+    }
 }
 
-.basicButton{
+.basicButton {
     padding: 5px;
     margin: 5px;
-    border: 3px solid  #077186;
-    background-color:  #077186;
+    border: 3px solid #077186;
+    background-color: #077186;
     font-weight: bold;
-    color:white;
-    border-radius:3px;
-    &:hover{
-        background-color:  #05445E;
+    color: white;
+    border-radius: 3px;
+
+    &:hover {
+        background-color: #05445E;
         border-color: #05445E;
     }
 }
 
-.signOutButton{
+.signOutButton {
     background-color: white;
     border: 3px solid #05445E;
     font-weight: bold;
-    color:#05445E;
-    border-radius:3px;
-    &:hover{
-        background-color:  #05445E;
+    color: #05445E;
+    border-radius: 3px;
+
+    &:hover {
+        background-color: #05445E;
         border-color: #05445E;
         color: white;
     }
 }
 
-.randomText{
+.randomText {
     color: #05445E;
     font-weight: bold;
     margin-top: 5px;
 }
 
-.accountPage{
-    header h1{
-        color:#05445E;
+.accountPage {
+    header h1 {
+        color: #05445E;
         padding-top: 15px;
     }
-    
-    h2{
+
+    h2 {
         background-color: #077186;
         color: #D4F1F4;
     }
 
-    h3{
-        color:#C55FFC;
+    h3 {
+        color: #C55FFC;
     }
 }
 
+.liNoDot {
+    list-style-type: none
+}
