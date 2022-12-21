@@ -20,9 +20,9 @@ function CreateAvatar(props) {
     const [errData, setErrData] = useState(undefined);
     const [avatarId, setAvatarId] = useState(null);
 
-    const [welcomeList, setWelcomeList] = useState();
-    const [niceList, setNiceList] = useState();
-    const [meanList, setMeanList] = useState();
+    const [welcomeList, setWelcomeList] = useState([]);
+    const [niceList, setNiceList] = useState([]);
+    const [meanList, setMeanList] = useState([]);
 
     const [welcome, setWelcome] = useState();
     const [nice, setNice] = useState();
@@ -50,24 +50,24 @@ function CreateAvatar(props) {
         }
     }
 
-    // const handleWelcomeListChange = (entry) => {
+    const handleWelcomeListChange = (entry) => {
 
-    //     let newList = [...welcomeList, entry]
+        let newList = [...welcomeList, entry]
         
-    //     setWelcomeList(newList);
-    // }
+        setWelcomeList(newList);
+    }
 
-    // const handleNiceListChange = (entry) => {
-    //     let newList = [...niceList, entry];
-    //     setNiceList(newList);
-    // }
+    const handleNiceListChange = (entry) => {
+        let newList = [...niceList, entry];
+        setNiceList(newList);
+    }
 
-    // const handleMeanListChange = (entry) => {
-    //     let newList = [...meanList, entry]
-    //     setMeanList(newList);
-    //     // console.log(newList);
-    //     // console.log(meanList)
-    // }
+    const handleMeanListChange = (entry) => {
+        let newList = [...meanList, entry]
+        setMeanList(newList);
+        // console.log(newList);
+        // console.log(meanList)
+    }
 
     // const readImageBinary = (img) => {
     //     const reader = new FileReader();
