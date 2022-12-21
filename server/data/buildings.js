@@ -80,7 +80,6 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
 
 
     const building = await this.getBuilding(newId.toString());
-    console.log('i made it')
     return building;
 }
 

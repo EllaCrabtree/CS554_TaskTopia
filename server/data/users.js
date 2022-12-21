@@ -280,14 +280,6 @@ async function getUserByUID(uid) {
   const newUID = uid.trim();
 
   const userCollection = await users();
-  const user_old = await userCollection.findOne({ uid: newUID });
-  if (!user_old) throw `Cannot find user.`;
-  try {
-    await badgeData.giveUserAllBadges(user_old.username);
-  }
-  catch (e) {
-    throw e
-  }
   const user = await userCollection.findOne({ uid: newUID });
 
   if (!user) {
