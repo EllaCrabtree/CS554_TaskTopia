@@ -24,9 +24,9 @@ function Building(props) {
     const [taskOverdue, setTaskOverdue] = useState(false);
     const [taskComplete, setTaskComplete] = useState(false);
 
-    const [welcomeList, setWelcomeList] = useState([]);
-    const [niceList, setNiceList] = useState([]);
-    const [meanList, setMeanList] = useState([]);
+    const [welcomeList, setWelcomeList] = useState('');
+    const [niceList, setNiceList] = useState('');
+    const [meanList, setMeanList] = useState('');
 
     let { buildingId } = useParams();
 
@@ -37,15 +37,24 @@ function Building(props) {
                 const { data } = await axios.get(`http://localhost:4000/private/buildings/${buildingId}`);
                 setBuildingData(data);
 
-                
-                // console.log(data.Avatar)
+                // console.log('this is the ')
+                // console.log('this is the avatar id')
+                // console.log(data.Avatar.toString());
+                // const { avatarData } = await axios.get(`http://localhost:4000/avatar/${data.Avatar.toString()}`)
+
+                // console.log('avatar data')
+                // console.log(avatarData);
+                // setWelcomeList(avatarData.welcome)
+                // setNiceList(avatarData.completion)
+                // setMeanList(avatarData.overdue)
 
                 const overdueTasks = buildingData.Tasks.filter(elem => {
                     elem.isOverdue == true;
                 })
-
-                // console.log(overdueTasks.length)
-
+                
+                console.log('im getting to callback function')
+                console.log(welcomeList);
+        
                 if (overdueTasks.length === 0) {
                     setWelcome(true)
                     setTaskOverdue(false)
@@ -53,6 +62,10 @@ function Building(props) {
                     setWelcome(false)
                     setTaskOverdue(true)
                 }
+
+                // console.log(data.Avatar)
+
+                // console.log(overdueTasks.length)
                 
             } catch (e) {
                 setErr(true);
@@ -70,6 +83,8 @@ function Building(props) {
                 const { data } = await axios.get(`http://localhost:4000/private/buildings/${buildingId}`);
                 setBuildingData(data);
 
+
+
                 setTaskCreated(false);
             } catch (e) {
                 setErr(true);
@@ -82,14 +97,30 @@ function Building(props) {
         }
     }, [taskCreated])
 
+    // useEffect(() => {
+    //     console.log('ur mom is fat')
+    // }, welcomeList)
+
     const getMessages = (welcome, nice, mean) => {
 
-        console.log('im getting to callback function')
-        console.log(welcome);
+    
+        // console.log('urmom')
+        // console.log(welcome)
+        // console.log(nice)
+        // console.log(mean)
+        // console.log('urmom2')
 
-        setWelcomeList(welcome);
-        setNiceList(nice);
-        setMeanList(mean);
+        // setWelcomeList(welcome[0]);
+        // setNiceList(nice[0]);
+        // setMeanList(mean[0]);
+
+        // console.log('urmom3')
+        // console.log(welcomeList)
+        // console.log(niceList)
+        // console.log(meanList)
+        // console.log('urmom4')
+
+        
 
         console.log(welcome);
     }
@@ -101,18 +132,18 @@ function Building(props) {
         setBuildingData(newBuildingData)
     }
 
-    const getWelcomeMessage = () => {
+    const getWelcomeMessage = (rand) => {
         console.log('hello')
-        console.log(welcomeList[Math.random() * welcomeList.length])
-        return welcomeList[Math.random() * welcomeList.length];
+        console.log(welcomeList[rand * welcomeList.length])
+        return welcomeList[rand * welcomeList.length];
     }
 
-    const getNiceMessage = () => {
-        return niceList[Math.random() * niceList.length];
+    const getNiceMessage = (rand) => {
+        return niceList[rand * niceList.length];
     }
 
-    const getMeanMessage = () => {
-        return meanList[Math.random() * meanList.length];
+    const getMeanMessage = (rand) => {
+        return meanList[rand * meanList.length];
     }
 
     // function avatarCallback(id) {
@@ -129,12 +160,7 @@ function Building(props) {
                 {buildingData && <h2>{buildingData.xpMax-buildingData.xp} XP left till Level {buildingData.level}</h2>}
 
                 <div id='AvatarDiv'>
-                    <CreateAvatar buildingId={buildingId} avatarID={buildingData.Avatar} callBackFunc={getMessages}/>
-                    <div id='AvatarMessages'>
-                        {welcome && <p>{getWelcomeMessage()}</p>}
-                        {taskOverdue && <p>{getMeanMessage()}</p>}
-                        {taskComplete && <p>{getNiceMessage()}</p>}
-                    </div>
+                    <CreateAvatar buildingId={buildingId} avatarID={buildingData.Avatar} message={{welcome: welcome, overdue: taskOverdue}}/>
                 </div>
                 
 

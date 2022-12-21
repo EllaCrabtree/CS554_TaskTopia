@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/react-in-jsx-scope */
@@ -19,9 +20,14 @@ function CreateAvatar(props) {
     const [errData, setErrData] = useState(undefined);
     const [avatarId, setAvatarId] = useState(null);
 
-    const [welcomeList, setWelcomeList] = useState([]);
-    const [niceList, setNiceList] = useState([]);
-    const [meanList, setMeanList] = useState([]);
+    const [welcomeList, setWelcomeList] = useState();
+    const [niceList, setNiceList] = useState();
+    const [meanList, setMeanList] = useState();
+
+    const [welcome, setWelcome] = useState();
+    const [nice, setNice] = useState();
+    const [mean, setMean] = useState();
+    
 
 
     const handleChange = (e) => {
@@ -44,24 +50,24 @@ function CreateAvatar(props) {
         }
     }
 
-    const handleWelcomeListChange = (entry) => {
+    // const handleWelcomeListChange = (entry) => {
 
-        let newList = [...welcomeList, entry]
+    //     let newList = [...welcomeList, entry]
         
-        setWelcomeList(newList);
-    }
+    //     setWelcomeList(newList);
+    // }
 
-    const handleNiceListChange = (entry) => {
-        let newList = [...niceList, entry];
-        setNiceList(newList);
-    }
+    // const handleNiceListChange = (entry) => {
+    //     let newList = [...niceList, entry];
+    //     setNiceList(newList);
+    // }
 
-    const handleMeanListChange = (entry) => {
-        let newList = [...meanList, entry]
-        setMeanList(newList);
-        // console.log(newList);
-        // console.log(meanList)
-    }
+    // const handleMeanListChange = (entry) => {
+    //     let newList = [...meanList, entry]
+    //     setMeanList(newList);
+    //     // console.log(newList);
+    //     // console.log(meanList)
+    // }
 
     // const readImageBinary = (img) => {
     //     const reader = new FileReader();
@@ -89,7 +95,10 @@ function CreateAvatar(props) {
 
                     setImageData(data.image);
                     console.log(data.image);
-                    callBackFunc(data.welcome, data.completion, data.overdue)
+                    setWelcome(data.welcome[0])
+                    setNice(data.completion[0])
+                    setMean(data.overdue)
+                    // callBackFunc(data.welcome, data.completion, data.overdue)
                     setCreated(true);
                 } else {
                     setCreated(false);
@@ -132,7 +141,7 @@ function CreateAvatar(props) {
 
             setImageData(data.image);
             console.log(data.image);
-            callBackFunc(welcomeList, niceList, meanList)
+            // callBackFunc(welcomeList, niceList, meanList)
             setCreated(true);
 
             // cb_setImage(data.image);
@@ -183,7 +192,17 @@ let meanTextBox, niceTextBox, welcomeTextBox;
             {imageData != null && <img id='avatarImage' src={imageData} alt='Odin'/>}
         </motion.div >
         </div> */}
-        {createdAvatar && <Avatar avatarImage={imageData} />}
+        {createdAvatar && 
+            <div>
+                <Avatar avatarImage={imageData} />
+                <div id='AvatarMessages'>
+                    {/* <h2>HELLO</h2> */}
+                    {props.message.welcome && <h2>hello</h2>}
+                    {/* {taskOverdue && <p>{niceList[0]}</p>} */}
+                    {props.message.overdue && <h2>grrrrrr</h2>}
+                </div>
+            </div>}
+        
 
 
         {!createdAvatar && !err &&
