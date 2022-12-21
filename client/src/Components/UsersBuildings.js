@@ -70,9 +70,10 @@ function UsersBuildings() {
             {buildingData && <ul>
                 {buildingData.map(element => {
                     return (
-                        <li key={element.buildingID}>
-                            <h3>{element.name}</h3>
-                            <Link className={element.code} to={`/buildings/${element.buildingID}`}> Type = {element.code} </Link>
+                        <li className="liNoDot" key={element.buildingID}>
+                            <h3>{element.name} ({element.code})</h3>
+                            <Link className={element.code} to={`/buildings/${element.buildingID}`}> See Building! </Link>
+                            <br />
                             <button onClick={() => setDeleteData(element)}>Delete Building</button>
                         </li>
                     )
