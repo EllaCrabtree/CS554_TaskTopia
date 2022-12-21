@@ -16,7 +16,7 @@ async function main() {
 
     try {
         //create users
-        const user1 = await usersData.createUser('Odin', 'Crabtree', 'Odline', 'the_baby_lulu123$', 'urmom@gmail.com')
+        const user1 = await usersData.createUser('Odin', 'Crabtree', 'Odline', 'the_baby_lulu123$', 'urmom@gmail.com', 'gutgaeiy78q39u')
         const user2 = await usersData.createUser("Bella", "Cruz", "BellaTheBaddie", "TopSecret123$", "Baddie@gmail.com")
 
         //Create buildings
