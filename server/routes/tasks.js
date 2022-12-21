@@ -21,6 +21,8 @@ router
 
 router
     .post('/addNotes', async (req, res) => {
+        // console.log(req.body);
+        // console.log(req.body.buildingId);
         if (!req.body.buildingId) return res.status(400).json({ error: 'You must provide an id for the task\'s building.' });
         if (!req.body.taskId) return res.status(400).json({ error: 'You must provide an id for the task.' });
         if (!req.body.notes) return res.status(400).json({ error: 'You must provide notes for the task.' });

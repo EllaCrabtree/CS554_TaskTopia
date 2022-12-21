@@ -16,6 +16,9 @@ function Building(props) {
     const [errData, setErrData] = useState(undefined);
     const [avatarID, setAvatar] = useState(null);
 
+    //State to indicate a new task has been added
+    const [taskCreated, setTaskCreated] = useState(null);
+
     //States to determine what the avatar says
     const [welcome, setWelcome] = useState(false);
     const [taskOverdue, setTaskOverdue] = useState(false);
@@ -26,12 +29,11 @@ function Building(props) {
     const [meanList, setMeanList] = useState([]);
 
     let { buildingId } = useParams();
-    if (!buildingId) {
-        buildingId = props.buildingId;
-    }
+
     useEffect(() => {
         async function fetchData() {
             try {
+                console.log(props.id)
                 const { data } = await axios.get(`http://localhost:4000/private/buildings/${buildingId}`);
                 setBuildingData(data);
 
@@ -45,7 +47,24 @@ function Building(props) {
             }
         }
         fetchData()
-    }, [buildingId, addBtnToggle]);
+    }, []);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                console.log(props.id)
+                const { data } = await axios.get(`http://localhost:4000/private/buildings/${buildingId}`);
+                setBuildingData(data);
+            } catch (e) {
+                setErr(true);
+                setErrData(e);
+            }
+        }
+
+        if (taskCreated) {
+            fetchData();
+        }
+    }, [taskCreated])
 
     const getMessages = (welcome, nice, mean) => {
 
@@ -70,43 +89,53 @@ function Building(props) {
     return (<div>
         {buildingData &&
             <div className='buildingContainer'>
+
+                {buildingData.name && <h1>{buildingData.name}</h1>}
+                {/* {buildingData.xp && <h2>Current XP:{buildingData.xp}</h2>}
+                {buildingData.xpMax && <h2>Max XP:{buildingData.xpMax}</h2>} */}
+                {buildingData && <h2>{buildingData.xpMax-buildingData.xp} XP left till Level {buildingData.level}</h2>}
+
                 <div id='AvatarDiv'>
                     <CreateAvatar buildingId={buildingId} avatarID={buildingData.Avatar} callBackFunc={getMessages}/>
-                    <div>
+                    <div id='AvatarMessages'>
                         {welcome && <p>{getWelcomeMessage()}</p>}
                         {taskOverdue && <p>{}</p>}
                         {taskComplete && <p>{}</p>}
                     </div>
                 </div>
                 
+
                 
 
 
                 {/* {buildingData.buildingCode && buildingData.level && <img alt={`${buildingData.buildingCode} Building`} src={require(`../icons/Buildings/${buildingData.buildingCode}/${buildingData.level}.png`)} />} */}
-                {buildingData.buildingCode && <h1>{buildingData.buildingCode}</h1>}
-                {buildingData.xp && <h2>Current XP:{buildingData.xp}</h2>}
+                {/* {buildingData.buildingCode && <h2>{buildingData.buildingCode}</h2>} */}
+                {/* {buildingData.xp && <h2>Current XP:{buildingData.xp}</h2>}
                 {buildingData.xpMax && <h2>Max XP:{buildingData.xpMax}</h2>}
-                {buildingData.level && <h2>Level:{buildingData.level}</h2>}
+                {buildingData.level && <h2>Level:{buildingData.level}</h2>} */}
                 {/* {buildingData.Avatars && buildingData.Avatars.map(element => {
                     return (
                         <Avatar id={element._id} key={element._id} />)
                 })} */}
+
+                {!buildingData.Tasks && <h3> You do not have any tasks!  Click below to add one!</h3>}
+
                 {buildingData.Tasks && buildingData.Tasks.map(element => {
                     return (
-                        <Task buildingId={buildingId} taskId={element._id} key={element._id} />)
+                        <Task buildingId={buildingData._id} taskData={element} key={element._id} />)
                 })}
                 {!addBtnToggle ? <button onClick={() => setBtnToggle(!addBtnToggle)} >Add New Tasks</button> : <button onClick={() => setBtnToggle(!addBtnToggle)} > Stop Adding New Tasks</button>}
                 <br />
                 <br />
                 <br />
-                {addBtnToggle && <AddTask buildingId={buildingId} />}
+                {addBtnToggle && <AddTask buildingId={buildingData._id} />}
             </div>
         }
 
         {/* {avatarID && <Avatar buildingID={buildingData._id}/>} */}
         
 
-        {err && <Error error={errData} />}
+        {/* {err && <Error error={errData} />} */}
     </div >)
 }
 

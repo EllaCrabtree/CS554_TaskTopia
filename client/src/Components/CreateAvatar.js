@@ -17,6 +17,7 @@ function CreateAvatar(props) {
     const [createdAvatar, setCreated] = useState(undefined);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
+    const [avatarId, setAvatarId] = useState(null);
 
     const [welcomeList, setWelcomeList] = useState([]);
     const [niceList, setNiceList] = useState([]);
@@ -81,7 +82,7 @@ function CreateAvatar(props) {
 
                 // console.log('HI I"M HERE')
                 if (avatarID !== 'NONE') {
-                    setCreated(true);
+                    
                     console.log(avatarID);
                     const { data } = await axios.get(`http://localhost:4000/avatar/${avatarID}`);
                     console.log(data);
@@ -89,6 +90,7 @@ function CreateAvatar(props) {
                     setImageData(data.image);
                     console.log(data.image);
                     callBackFunc(data.welcome, data.completion, data.overdue)
+                    setCreated(true);
                 } else {
                     setCreated(false);
                 }
@@ -131,6 +133,7 @@ function CreateAvatar(props) {
             setImageData(data.image);
             console.log(data.image);
             callBackFunc(welcomeList, niceList, meanList)
+            setCreated(true);
 
             // cb_setImage(data.image);
             
@@ -165,7 +168,7 @@ let meanTextBox, niceTextBox, welcomeTextBox;
 
     return (<div>
 
-        <div>
+        {/* <div>
             <motion.div
         style={{ height: 250, width: 250}} 
         animate={{
@@ -179,8 +182,8 @@ let meanTextBox, niceTextBox, welcomeTextBox;
         >
             {imageData != null && <img id='avatarImage' src={imageData} alt='Odin'/>}
         </motion.div >
-        </div>
-        
+        </div> */}
+        {createdAvatar && <Avatar avatarImage={imageData} />}
 
 
         {!createdAvatar && !err &&

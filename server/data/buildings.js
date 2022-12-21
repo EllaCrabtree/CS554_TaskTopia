@@ -61,7 +61,7 @@ async function createBuilding(name, buildingCode, xp, xpMax, level, user) {
     const userCollection = await users(); //Initializing User Collection Variable
 
     //check if username is within database
-    const foundUser = await userCollection.findOne({ username: user });
+    const foundUser = await userCollection.findOne({ email: user });
 
     if (!foundUser) {
         throw 'Error: User not found!'
@@ -228,7 +228,7 @@ async function deleteBuilding(id) {
         throw 'DeleteBuilding: Update failed';
     }
 
-    return true;
+    return id;
 }
 
 async function getAllBuildings() {
@@ -265,6 +265,11 @@ async function addAvatarToBuilding(buildingId, avatarId) {
     const buildingCollection = await buildings();
     const building = await buildingCollection.findOne({ _id: ObjectId(buildingId) });
 
+<<<<<<< HEAD
+    const updatedInfo = await buildingCollection.updateOne(
+        { _id: ObjectId(buildingId) },
+        { $set: {Avatar: ObjectId(avatarId)} });
+=======
     // const updatedBuilding = {
 
     // }
@@ -272,6 +277,7 @@ async function addAvatarToBuilding(buildingId, avatarId) {
     const updatedInfo = await buildingCollection.updateOne(
         { _id: ObjectId(buildingId) },
         { $set: { Avatar: avatarId } });
+>>>>>>> ac5c87c135283e2b30c66cd731a2448bed58a3fe
 
     if (building == null) throw 'Error: Building not found';
 

@@ -4,20 +4,30 @@ import axios from 'axios';
 import Error from './Error';
 import AddBuilding from './AddBuilding';
 import { Link } from 'react-router-dom';
+// import { AuthContext } from "../firebase/Auth";
 
 
 
 function UsersBuildings() {
+    // const currentUser = useContext(AuthContext);
+
     const [buildingData, setBuildingData] = useState(null);
     const [addBuildingForm, setAddBuildingForm] = useState(false);
     const [err, setErr] = useState(false);
     const [errData, setErrData] = useState(undefined);
     const [deleteData, setDeleteData] = useState(null);
 
+
+    function changeBuildingsAfterDelete(buildingId) {
+        const newBuildingData = buildingData.filter(building => building.buildingId != buildingId)
+        setBuildingData(newBuildingData);
+    }
+
     useEffect(() => {
         async function fetchData() {
             try {
-                const { data } = await axios.get(`http://localhost:4000/private/users/buildings`);
+                // const { user } = await axios.get(`http://localhost:4000/private/users/uid/${currentUser.currentUser.uid}`)
+                const { data } = await axios.get(`http://localhost:4000/private/users/buildings/odline`)
                 console.log(data);
 
                 if (data.length == 0) {
@@ -37,6 +47,7 @@ function UsersBuildings() {
                 const { data } = await axios.delete(`http://localhost:4000/private/buildings/` + deleteData.buildingID);
                 setDeleteData(null);
                 console.log(data);
+                changeBuildingsAfterDelete(deleteData.buildingID)
             } catch (e) {
                 setErr(true);
                 setErrData(e);

@@ -101,7 +101,6 @@ function SignUp() {
       <header>
         <h1>Sign Up</h1>
       </header>
-
       {pwMatch && <h4>{pwMatch}</h4>}
       <form onSubmit={handleSignUp}>
         <div>
